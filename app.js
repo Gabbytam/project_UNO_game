@@ -5,6 +5,8 @@ let cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'switch', 'reverse'];
 let specialCardValue= ['wild Card', 'Wild Card +4'];
 
 //MIGHT BE BETTER TO USE CLASS SO YOU CAN ACCESS TYPE AND VALUE 
+
+//first made a class Card that takes in 2 values
 class Card {
     constructor(type, value){
         this.type= type;
@@ -12,6 +14,7 @@ class Card {
     }
 }
 
+//then made a factory that connects the Card class within its method, it also provides arrays that represent decks
 class Factory {
     constructor() {
         this.deckOfCards= [];
@@ -33,40 +36,25 @@ class Factory {
             this.deckOfCards.push(card);
 
         }
-        console.log(this.deckOfCards); //able to see our deckOfCards
-        //return this.deckOfCards;
+        //console.log(this.deckOfCards); //able to see our deckOfCards
+    }
+    shuffleDeck(deck){ //when shuffleDeck is called, our deckOfCards array is passed in. This function changes the value of deck of cards for some reason idk, cant figure it out. womp womp
+        for(let i=0; i<deck.length; i++){ //loops through entire deckOfCards array
+            let random= Math.floor(Math.random()* deck.length); //generates a new random number for every loop, up to the number of elements in deckOfCards array 
+            const arrayElement= deck[i]; //array is equal to array element
+            deck[i]= deck[random]; //set the current array element to an element at random, left takes value of right
+            deck[random]= arrayElement;
+        }
+        this.shuffledCards= deck; //put shuffled deck equal to the shuffledCards array, even though it changes the original deckOfCards array 
     }
 }
 
-const deck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
-deck.makeDeck(); //call the makeDeck function on deck
-console.log(deck); //now we see that deck contains a filled deckOfCards array
-
-
-
-//DO IT WITH A FUNCTION
-// let cardType= ['red', 'yellow', 'green', 'blue'];
-// let cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'switch', 'reverse'];
-// let specialCardValue= ['wild Card', 'Wild Card +4'];
-// let deckOfCards= [];
-// let shuffledCards= [];
-// let generateDeck=()=> {
-
-//     //series of for loops that will end up making 2 of each number card in each color 
-//     for(let k=0; k<2; k++){ //runs twice so we can get double of each number card
-//         for(let i=0; i<cardType.length; i++){ //runs the inner for loops for each color type of card
-//             for(let j=0; j<cardValue.length; j++){//runs through all the values 
-//                 deckOfCards.push(`Type: ${cardType[i]} Value: ${cardValue[j]}`); //each card thats made, with a color and a value, will be pushed into deckOfCards array
-//             }
-//         }
-//     }
-//     for(let f=0; f<4; f++){
-//         deckOfCards.push(`Type: ${specialCardValue[0]} Value: 0`);
-//         deckOfCards.push(`Type: ${specialCardValue[1]} Value: +4`);
-//     }
-// }
-// generateDeck();
-// console.log(deckOfCards);
+const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
+newDeck.makeDeck(); //call the makeDeck function on deck
+// const allCards= newDeck.deckOfCards;
+// console.log('this is all cards', allCards);
+newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
+console.log(newDeck); //now we see that deck contains a filled deckOfCards array
 
 
 document.addEventListener('DOMContentLoaded', ()=> {
