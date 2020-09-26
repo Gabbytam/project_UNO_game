@@ -52,13 +52,38 @@ class Factory {
     }
 }
 
-//HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS
+//HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS to make the deck of cards and shuffle them 
 const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
 newDeck.makeDeck(); //call the makeDeck function on deck
 // const allCards= newDeck.deckOfCards;
 // console.log('this is all cards', allCards);
 newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
 console.log(newDeck); //now we see that deck contains a filled deckOfCards array
+
+//FUNCTION THAT CREATES VISABLE CARDS
+const cardMaker= ()=> {
+    for(let i= 0; i<newDeck.shuffledCards.length; i++){ //loops through the array that is all the shuffled cards 
+        let seeAllCards= document.createElement('div');
+        seeAllCards.classList.add('card'); //give a class to style
+        //if else statements that will give elements a class name/ color depending on their type
+        if(newDeck.shuffledCards[i].type=== 'red'){
+            seeAllCards.classList.add('red');
+        } else if(newDeck.shuffledCards[i].type=== 'yellow'){
+            seeAllCards.classList.add('yellow');
+        } else if(newDeck.shuffledCards[i].type=== 'green'){
+            seeAllCards.classList.add('green');
+        } else if(newDeck.shuffledCards[i].type=== 'blue'){
+            seeAllCards.classList.add('blue');
+        } else { //for the wild cards
+            seeAllCards.classList.add('black');
+        }
+        let cardInfo= document.createElement('h1'); //create an element that can add the text info 
+        cardInfo.innerText= `Type: ${newDeck.shuffledCards[i].type} Value: ${newDeck.shuffledCards[i].value}`;
+        // seeAllCards.style.position= 'absolute'; //makes all the cards stack on top of each other
+        seeAllCards.append(cardInfo); //add the h1 with info onto the card div 
+        deckSpot.append(seeAllCards); //then append the card to the existing html div so we can see it in the browser
+    } 
+}
 
 //FUNCTION THAT DEALS OUT THE CARDS 
 //use this as a callback function for an event listener 
@@ -77,31 +102,18 @@ const dealCards= ()=> {
     console.log('cards for player 2', player2Cards);
     //console.log('this is the remaining deck', newDeck.shuffledCards); //same as below
     //console.log('this is the drawPile', drawPile); //same as above
+}
 
-    //create visable cards for the players with div elements and inner text their values, maybe down the line figure out how to use images instead
+//FUNCTION THAT SHOWS CARDS AT BOTTOM AND PUTS THEM IN THE VIEW CARDS DIV
+const showCards= ()=> {
+        //create visable cards for the players with div elements and inner text their values, maybe down the line figure out how to use images instead
     if(whosTurn=== 'player1'){ //to make cards for player1
-        for(let i= 0; i<player1Cards.length; i++){ //will make diff amount of cards depending on how many are in the array
-            let seeOnesCard= document.createElement('div');
-            seeOnesCard.classList.add('card'); //give a class to style 
-            seeOnesCard.classList.add('player1Card'); //give a class to reference 
-            let cardInfo= document.createElement('h1'); //create an element that can add the text info 
-            cardInfo.innerText= `Type: ${player1Cards[i].type} Value: ${player1Cards[i].value}`;
-            seeOnesCard.append(cardInfo); //add the h1 with info onto the card div 
-            viewCard.append(seeOnesCard); //then append the card to the existing html div so we can see it in the browser
-        }  
+       //code to show player ones cards in the viewCard 
     } else if(whosTurn=== 'player2'){
-        for(let i= 0; i<player2Cards.length; i++){ //loops through array for player 2 cards
-            let seeTwosCard= document.createElement('div');
-            seeTwosCard.classList.add('card'); //give a class to style 
-            seeTwosCard.classList.add('player2Card'); //give a class to reference 
-            let cardInfo= document.createElement('h1'); //create an element that can add the text info 
-            cardInfo.innerText= `Type: ${player2Cards[i].type} Value: ${player2Cards[i].value}`;
-            seeTwosCard.append(cardInfo); //add the h1 with info onto the card div 
-            viewCard.append(seeTwosCard); //then append the card to the existing html div so we can see it in the browser
-        }  
+        //code to show player twos cards in the viewCard
     }
 }
-//dealCards();//call function to get it to run //MAYBE USE AN EVENT LISTENER BUTTON TO DEAL CARD, LIKE START GAME
+
 
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
 const removeCard= ()=> {
@@ -152,15 +164,14 @@ const drawCard= ()=> {
 const playGame= ()=> {
     //make sure to use the classed and make a deck, then shuffle the deck. Currently that is being done in the call for it after the class is written but were going to want to move that down into the playGame function 
     //deal out cards 
+    cardMaker();
     dealCards();
-    
-    
+    //showCards();//check to see if show card function is working 
 }
 
-playGame();
+playGame(); //invoke playGame function, here just for trial and error 
 
 document.addEventListener('DOMContentLoaded', ()=> {
     //first show rules of game then ask if they want to play
-        //if yes, run play game function 
-    
+        //if yes, run play game function    
 })
