@@ -24,14 +24,14 @@ class Factory {
         this.shuffledCards= [];
     }
     makeDeck(){
-        for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
+        //for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
             for(let i= 0; i<cardType.length; i++){ //loops through the different color cards 
                 for(let j= 0; j<cardValue.length; j++){ //loops through different available values for each color, because its a nested loop
                     let card= new Card(cardType[i], cardValue[j]); //creating a new card object that calls on our Card class, passing in the current cardType for the type and the cardValue for the value
                     this.deckOfCards.push(card); //adds this newly made object into our deckOfCards array 
                 }
             }
-        }   
+        //}   
         for(let f=0; f<4; f++){ //need to make 4 of each of these cards
             let card= new Card(specialCardValue[0], -1); //creates card using Card class passing in a specified type and value
             this.deckOfCards.push(card); //push that before moving on
@@ -64,6 +64,7 @@ console.log(newDeck); //now we see that deck contains a filled deckOfCards array
 const cardMaker= ()=> {
     for(let i= 0; i<newDeck.shuffledCards.length; i++){ //loops through the array that is all the shuffled cards 
         let seeAllCards= document.createElement('div');
+        seeAllCards.id= i;
         seeAllCards.classList.add('card'); //give a class to style
         //if else statements that will give elements a class name/ color depending on their type
         if(newDeck.shuffledCards[i].type=== 'red'){
@@ -90,18 +91,20 @@ const cardMaker= ()=> {
 const dealCards= ()=> {
     //each player gets 7 cards to start 
     for(let i=0; i<14; i++){ //loop 14 times 
+        console.log('this is how the 4 loop runs through the shuffled cards array', newDeck.shuffledCards[i]);
         if(i%2== 0){ //check if i is even number. Way of switching off cards when dealing to 2 players
             player1Cards.push(newDeck.shuffledCards[i]); //add card to array for Player1
         } else if(i%2== 1){ //check if i is odd number
             player2Cards.push(newDeck.shuffledCards[i]); //add card to array for Player2
         }
-        newDeck.shuffledCards.shift(); //removes the card from beginning of array, resembles dealing them out, which would take the dealed out cards away from the shuffled deck 
+        //newDeck.shuffledCards.shift(); //removes the card from beginning of array, resembles dealing them out, which would take the dealed out cards away from the shuffled deck 
     }
+    newDeck.shuffledCards.splice(0, 14); //remove the cards from shuffledCards array AFTER the for loop is running so it doesnt mess with the count of the for loop
     drawPile= newDeck.shuffledCards; //set drawPile equal to the current state of shuffledCards (the shuffled cards minus the cards that were dealt out) 
     console.log('cards for player 1', player1Cards);
     console.log('cards for player 2', player2Cards);
     //console.log('this is the remaining deck', newDeck.shuffledCards); //same as below
-    //console.log('this is the drawPile', drawPile); //same as above
+    console.log('this is the drawPile', drawPile); //same as above
 }
 
 //FUNCTION THAT SHOWS CARDS AT BOTTOM AND PUTS THEM IN THE VIEW CARDS DIV
