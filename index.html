@@ -5,15 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UNO</title>
     <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1 id="title">Uno</h1>
-    <div id="container">
-        <div id="deckSpot"></div>
-        <div id="usedCardSpot"></div>
-        <div id="player1Spot"></div>
-        <div id="player2Spot"></div>
-
+    <div id="outter-container">
+        <div id="spotOne">Player 1 Cards</div>
+        <div id="container"> 
+            <div id="usedCardSpot">
+                <p>this is the used card spot</p></div>
+            <div id="deckSpot">
+                <p>this is the deck pile</p></div> 
+        </div>
+        <div id="spotTwo">Player2 cards</div>
+    </div>
+    
+    <div>Tell em whos cards</div>
+    <div id="viewCard">
+        <div id="playersCards"></div>
     </div>
     <script src="app.js"></script>
 </body>
