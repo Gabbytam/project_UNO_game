@@ -35,11 +35,15 @@ body {
 }
 
 #deckSpot, #usedCardSpot, .card, #spotOne, #spotTwo {
-    background: orange;
+    background: rgba(0, 0, 0, 0.336);
     border: 3px dotted black;
     width: 130px;
     height: 200px;
     margin:0 20px 0 20px;
+}
+
+.card {
+    position: absolute; /*allows all the cards to be stacked on top of each other*/
 }
 
 #spotOne, #spotTwo {
@@ -61,3 +65,23 @@ body {
     justify-content: space-between;
 }
 
+.red {
+    background: rgb(252, 40, 40);
+}
+
+.yellow {
+    background: yellow;
+}
+
+.green {
+    background: rgb(17, 235, 17);
+}
+
+.blue {
+    background: rgb(0, 195, 255);
+}
+
+.black {
+    background: black;
+    color: white;
+}
