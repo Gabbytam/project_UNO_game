@@ -25,6 +25,18 @@ body {
 
 }
 
+.box4Player {
+    width: 250px;
+    height: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+
+
+}
+
 #container {
     display: flex;
     width: 700px;
@@ -55,14 +67,19 @@ body {
     width: 100%;
     height: 200px;
     display: flex;
-    flex-direction: row;
+    flex-direction: row; /* this gets the cards to appear side by side in the viewCard div*/
 }
 
 .card {
     margin: 0 auto;
     font-size: 10px; 
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /*this styling is for the cards when theyre in the viewCard section*/
+}
+
+#whosCards {
+    font-size: 30px;
+    color: black;
 }
 
 .red {
