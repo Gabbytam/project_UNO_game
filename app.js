@@ -6,8 +6,12 @@ const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let whosTurn= 'player1';
 //initialize empty arrays for the player's cards 
-let player1Cards= [];
-let player2Cards=[];
+let player1Cards= []; //this used to see in console, can get rid of later 
+let player2Cards=[]; //this used to see in console, can get rid of later
+//arrays for the visual cards, will be attached to div elements so we can get rid of above arrays later
+let arrayOfAllCards= []; 
+let arrayForPlayer1= [];
+let arrayForPlayer2=[];
 
 //MIGHT BE BETTER TO USE CLASS SO YOU CAN ACCESS TYPE AND VALUE 
 //first made a class Card that takes in 2 attributes, the type and value 
@@ -24,14 +28,14 @@ class Factory {
         this.shuffledCards= [];
     }
     makeDeck(){
-        //for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
+        for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
             for(let i= 0; i<cardType.length; i++){ //loops through the different color cards 
                 for(let j= 0; j<cardValue.length; j++){ //loops through different available values for each color, because its a nested loop
                     let card= new Card(cardType[i], cardValue[j]); //creating a new card object that calls on our Card class, passing in the current cardType for the type and the cardValue for the value
                     this.deckOfCards.push(card); //adds this newly made object into our deckOfCards array 
                 }
             }
-        //}   
+        }   
         for(let f=0; f<4; f++){ //need to make 4 of each of these cards
             let card= new Card(specialCardValue[0], -1); //creates card using Card class passing in a specified type and value
             this.deckOfCards.push(card); //push that before moving on
@@ -80,41 +84,73 @@ const cardMaker= ()=> {
         }
         let cardInfo= document.createElement('h1'); //create an element that can add the text info 
         cardInfo.innerText= `Type: ${newDeck.shuffledCards[i].type} Value: ${newDeck.shuffledCards[i].value}`;
-        // seeAllCards.style.position= 'absolute'; //makes all the cards stack on top of each other
+        //seeAllCards.style.position= 'absolute'; //makes all the cards stack on top of each other
         seeAllCards.append(cardInfo); //add the h1 with info onto the card div 
         deckSpot.append(seeAllCards); //then append the card to the existing html div so we can see it in the browser
+        arrayOfAllCards.push(seeAllCards); //adds all the newly created cards into an array so they can be accessed by other functions 
     } 
+}
+console.log('heres the array', arrayOfAllCards); //test
+
+//FUNCTION THAT WILL MOVE PLAYER CARDS TO THEIR RESPECTIVE HOLDING CELLS
+const moveCards= ()=> {
+    if(whosTurn=== 'player1'){ //if its player2 turn, player1 cards need to go to holding cell
+        for(let i=0; i<arrayForPlayer2.length; i++){
+            spotTwo.append(arrayForPlayer2[i]); //move cards to holding cell
+            arrayForPlayer2[i].style.position= 'absolute'; //change positioning back so cards stack 
+        }
+    } else if(whosTurn=== 'player2'){ //and if it is player1 turn, player2 cards need to go to holding cell
+        for(let i=0; i<arrayForPlayer1.length; i++){
+            spotOne.append(arrayForPlayer1[i]);
+            arrayForPlayer1[i].style.position= 'absolute';
+        }
+    }
+}
+
+//FUNCTION THAT SHOWS CARDS AT BOTTOM AND PUTS THEM IN THE VIEW CARDS DIV
+//call this function everytime you switch whos turn it is 
+const showCards= ()=> {
+    while(viewCard.firstChild){ //will remove (in essense, switch) cards out of viewSpot div
+        viewCard.removeChild(viewCard.firstChild);
+    }
+    moveCards(); //the showCards function is also responsible for moving the cards out of the viewCard div and back into its holding cell 
+    if(whosTurn=== 'player1'){ 
+        whosCards.innerText= `Player 1's Cards, ${arrayForPlayer1.length}`;//change the label to express whos cards were looking at 
+       //move player1 cards to viewCard div
+       for(let i=0; i<arrayForPlayer1.length; i++){ //card elements are inside this array so we have to loop and add one by one
+        viewCard.append(arrayForPlayer1[i]); //accesses and adds singular array elements 
+        arrayForPlayer1[i].style.position= 'static'; //we dont want the cards in the viewCard div to be stacked so we change the positioning 
+       }
+    } else if(whosTurn=== 'player2'){ //everything is the same as above if statement but for the other player
+        whosCards.innerText= `Player 2's Cards, ${arrayForPlayer2.length}`;
+        for(let i=0; i<arrayForPlayer2.length; i++){ 
+            viewCard.append(arrayForPlayer2[i]);  
+            arrayForPlayer2[i].style.position= 'static'; 
+        }
+    }
 }
 
 //FUNCTION THAT DEALS OUT THE CARDS 
 //use this as a callback function for an event listener 
 const dealCards= ()=> {
-    //each player gets 7 cards to start 
     for(let i=0; i<14; i++){ //loop 14 times 
-        console.log('this is how the 4 loop runs through the shuffled cards array', newDeck.shuffledCards[i]);
         if(i%2== 0){ //check if i is even number. Way of switching off cards when dealing to 2 players
             player1Cards.push(newDeck.shuffledCards[i]); //add card to array for Player1
+            spotOne.append(arrayOfAllCards[i]); //because this is the innitial dealing and its nobodys turn, we write this code in, instead of using moveCard function 
+            arrayForPlayer1.push(arrayOfAllCards[i]);
         } else if(i%2== 1){ //check if i is odd number
             player2Cards.push(newDeck.shuffledCards[i]); //add card to array for Player2
+            spotTwo.append(arrayOfAllCards[i]); 
+            arrayForPlayer2.push(arrayOfAllCards[i]);
         }
-        //newDeck.shuffledCards.shift(); //removes the card from beginning of array, resembles dealing them out, which would take the dealed out cards away from the shuffled deck 
     }
     newDeck.shuffledCards.splice(0, 14); //remove the cards from shuffledCards array AFTER the for loop is running so it doesnt mess with the count of the for loop
+    arrayOfAllCards.splice(0, 14); //also have to remove from the array of html elements 
     drawPile= newDeck.shuffledCards; //set drawPile equal to the current state of shuffledCards (the shuffled cards minus the cards that were dealt out) 
     console.log('cards for player 1', player1Cards);
     console.log('cards for player 2', player2Cards);
     //console.log('this is the remaining deck', newDeck.shuffledCards); //same as below
-    console.log('this is the drawPile', drawPile); //same as above
-}
-
-//FUNCTION THAT SHOWS CARDS AT BOTTOM AND PUTS THEM IN THE VIEW CARDS DIV
-const showCards= ()=> {
-        //create visable cards for the players with div elements and inner text their values, maybe down the line figure out how to use images instead
-    if(whosTurn=== 'player1'){ //to make cards for player1
-       //code to show player ones cards in the viewCard 
-    } else if(whosTurn=== 'player2'){
-        //code to show player twos cards in the viewCard
-    }
+    //console.log('this is the drawPile', drawPile); //same as above
 }
 
 
@@ -168,8 +204,16 @@ const playGame= ()=> {
     //make sure to use the classed and make a deck, then shuffle the deck. Currently that is being done in the call for it after the class is written but were going to want to move that down into the playGame function 
     //deal out cards 
     cardMaker();
-    dealCards();
-    //showCards();//check to see if show card function is working 
+    //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
+    setTimeout(dealCards, 8000); //instead of using setTimeout do an event listener for clicker, of deal cards button
+    //dealCards();
+    setTimeout(showCards, 14000);
+    //showCards();
+    //BELOW IS USED FOR PRACTICE, CHECKING TO SEE IF SHOWCARD FUNCTION WORKS
+    setTimeout(()=> {
+        whosTurn= 'player2';
+        showCards();
+    }, 18000);
 }
 
 playGame(); //invoke playGame function, here just for trial and error 
@@ -178,3 +222,5 @@ document.addEventListener('DOMContentLoaded', ()=> {
     //first show rules of game then ask if they want to play
         //if yes, run play game function    
 })
+
+
