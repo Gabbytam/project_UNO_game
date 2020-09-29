@@ -153,32 +153,45 @@ const dealCards= ()=> {
     //console.log('this is the drawPile', drawPile); //same as above
 }
 
-
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
-const removeCard= ()=> {
-    drawPile.shift();
-    //maybe add a conditional that checks if person put a +2 or +4, in that case, splice out 2 or 4 cards from beginning of array
+const removeCard= ()=> { //!!!!!HAVE TO DO ALL THIS FOR THE ARRAYOFALLCARDS
+    console.log('heres the array of all cards', arrayOfAllCards);
+    if(drawPile[0].value=== '+2'){ //special condition for +2 cards
+        drawPile.splice(0,2); //signifies drawing 2 cards 
+    } else if(drawPile[0].value=== '+4'){ //special condition for +4 cards 
+        drawPile.splice(0,4); //signifies drawing 4 cards 
+    } else {
+        drawPile.shift(); //get rid of top card 
+    }
+
+    //code that does the same thing but for the card divs 
+    //if(arrayOfAllCards[0])
     //add a while statement to check if there are items in drawPile array
         //if not, reshuffle the cards 
 }
 
 //FUNCTION THAT WILL PUT TOP CARD DOWN
 const startCard= ()=> {
-    //we're using drawPile to make the code make more sense, but we could also just use newDeck.shuffledCards because that value as it continues through code updates 
+    //we're using drawPile to make the code make more sense, but we could also just use newDeck.shuffledCards because that value updates as it continues through code(I think)
    
     //rule is that if top card is one of the wild cards, draw another card as the start card 
     if(drawPile[0].type.includes('Wild')){ //checks the type of the first card in the drawPile to see if it includes the string, Wild, and if so:
         console.log('That cant be your start card...sorry');
         drawPile.push(drawPile[0]); //first, move that card to the end of the array so it can be used later
-        removeCard();
-        //drawPile.shift(); //second, remove it from the beginning of the drawPile array
+        arrayOfAllCards.push(arrayOfAllCards[0]); //mirror with card element 
+        drawPile.shift(); //second, remove it from the beginning of the drawPile array
+        arrayOfAllCards.shift(); //mirror with card element 
         topCard=drawPile[0]; //third, set the top card to the NEW first card in the drawPile array
+        topCardElement=arrayOfAllCards[0]; //mirror with card element 
     } else { //for any card that isnt type 'Wild'
-        topCard=drawPile[0];
-        removeCard(); //use removeCard function to do what code below does
-        //drawPile.shift(); //make sure to remove that card from the drawPile
+        topCard=drawPile[0]; //top card is equal to first card in array
+        topCardElement=arrayOfAllCards[0]; //mirror with card element 
+        drawPile.shift(); //make sure to remove that card from the drawPile
+        arrayOfAllCards.shift(); //mirror with card element 
     }
     console.log('this is the starting/top card', topCard); //able to access variable without declaring?? why
+    console.log('this is top card element', topCardElement);
+    usedCardSpot.append(topCardElement);
 }
 //startCard();//invoke the function //WILL ALSO PROBABLY BE PASSED INTO AN EVENT LISTENER 
 //console.log(topCard); //can even access it outside of function?? HOW?? ASK THIS QUESTION 
@@ -205,15 +218,11 @@ const playGame= ()=> {
     //deal out cards 
     cardMaker();
     //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
-    setTimeout(dealCards, 8000); //instead of using setTimeout do an event listener for clicker, of deal cards button
+    setTimeout(dealCards, 3000); //instead of using setTimeout do an event listener for clicker, of deal cards button
     //dealCards();
-    setTimeout(showCards, 14000);
+    setTimeout(showCards, 6000);
     //showCards();
-    //BELOW IS USED FOR PRACTICE, CHECKING TO SEE IF SHOWCARD FUNCTION WORKS
-    setTimeout(()=> {
-        whosTurn= 'player2';
-        showCards();
-    }, 18000);
+    setTimeout(startCard, 9000);
 }
 
 playGame(); //invoke playGame function, here just for trial and error 
