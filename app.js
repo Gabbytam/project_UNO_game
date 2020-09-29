@@ -5,9 +5,11 @@ const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'switch', 'reverse', '+2'];
 const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let whosTurn= 'player1';
+let topCard;
+let topCardElement;
 //initialize empty arrays for the player's cards 
-let player1Cards= []; //this used to see in console, can get rid of later 
-let player2Cards=[]; //this used to see in console, can get rid of later
+let player1Cards= []; //this used to see in console 
+let player2Cards=[]; //this used to see in console
 //arrays for the visual cards, will be attached to div elements so we can get rid of above arrays later
 let arrayOfAllCards= []; 
 let arrayForPlayer1= [];
@@ -68,7 +70,9 @@ console.log(newDeck); //now we see that deck contains a filled deckOfCards array
 const cardMaker= ()=> {
     for(let i= 0; i<newDeck.shuffledCards.length; i++){ //loops through the array that is all the shuffled cards 
         let seeAllCards= document.createElement('div');
+        // seeAllCards.addEventListener('click', makeAMove);
         seeAllCards.id= i;
+        seeAllCards.setAttribute('value', newDeck.shuffledCards[i].value); //give all visible cards a value attribute equal to the card value
         seeAllCards.classList.add('card'); //give a class to style
         //if else statements that will give elements a class name/ color depending on their type
         if(newDeck.shuffledCards[i].type=== 'red'){
@@ -120,12 +124,14 @@ const showCards= ()=> {
        for(let i=0; i<arrayForPlayer1.length; i++){ //card elements are inside this array so we have to loop and add one by one
         viewCard.append(arrayForPlayer1[i]); //accesses and adds singular array elements 
         arrayForPlayer1[i].style.position= 'static'; //we dont want the cards in the viewCard div to be stacked so we change the positioning 
+        arrayForPlayer1[i].addEventListener('click', makeAMove); //put event listeners on the card when it is players turn and cards are shown 
        }
     } else if(whosTurn=== 'player2'){ //everything is the same as above if statement but for the other player
         whosCards.innerText= `Player 2's Cards, ${arrayForPlayer2.length}`;
         for(let i=0; i<arrayForPlayer2.length; i++){ 
             viewCard.append(arrayForPlayer2[i]);  
             arrayForPlayer2[i].style.position= 'static'; 
+            arrayForPlayer2[i].addEventListener('click', makeAMove);
         }
     }
 }
@@ -153,23 +159,6 @@ const dealCards= ()=> {
     //console.log('this is the drawPile', drawPile); //same as above
 }
 
-//FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
-const removeCard= ()=> { //!!!!!HAVE TO DO ALL THIS FOR THE ARRAYOFALLCARDS
-    console.log('heres the array of all cards', arrayOfAllCards);
-    if(drawPile[0].value=== '+2'){ //special condition for +2 cards
-        drawPile.splice(0,2); //signifies drawing 2 cards 
-    } else if(drawPile[0].value=== '+4'){ //special condition for +4 cards 
-        drawPile.splice(0,4); //signifies drawing 4 cards 
-    } else {
-        drawPile.shift(); //get rid of top card 
-    }
-
-    //code that does the same thing but for the card divs 
-    //if(arrayOfAllCards[0])
-    //add a while statement to check if there are items in drawPile array
-        //if not, reshuffle the cards 
-}
-
 //FUNCTION THAT WILL PUT TOP CARD DOWN
 const startCard= ()=> {
     //we're using drawPile to make the code make more sense, but we could also just use newDeck.shuffledCards because that value updates as it continues through code(I think)
@@ -179,6 +168,7 @@ const startCard= ()=> {
         console.log('That cant be your start card...sorry');
         drawPile.push(drawPile[0]); //first, move that card to the end of the array so it can be used later
         arrayOfAllCards.push(arrayOfAllCards[0]); //mirror with card element 
+        deckSpot.append(arrayOfAllCards[0]); //have to add extra step for card visual so that the card element moves from top to bottom of deck
         drawPile.shift(); //second, remove it from the beginning of the drawPile array
         arrayOfAllCards.shift(); //mirror with card element 
         topCard=drawPile[0]; //third, set the top card to the NEW first card in the drawPile array
@@ -197,6 +187,25 @@ const startCard= ()=> {
 //console.log(topCard); //can even access it outside of function?? HOW?? ASK THIS QUESTION 
 //answer: It is Not Recommended to declare a variable without var keyword. It can accidently overwrite an existing global variable. Scope of the variables declared without var keyword become global irrespective of where it is declared. Global variables can be accessed from anywhere in the web page.
 
+
+//FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
+const removeCard= ()=> { //!!!!!HAVE TO DO ALL THIS FOR THE ARRAYOFALLCARDS
+    console.log('heres the array of all cards', arrayOfAllCards);
+    if(drawPile[0].value=== '+2'){ //special condition for +2 cards
+        drawPile.splice(0,2); //signifies drawing 2 cards 
+        arrayOfAllCards.splice(0,2); //mirror with card element 
+    } else if(drawPile[0].value=== '+4'){ //special condition for +4 cards 
+        drawPile.splice(0,4); //signifies drawing 4 cards 
+        arrayOfAllCards.splice(0,4); //mirror with card element 
+    } else {
+        drawPile.shift(); //get rid of top card 
+        arrayOfAllCards.shift(); //mirror with card element 
+    }
+    //add a while statement to check if there are items in drawPile array
+        //if not, reshuffle the cards 
+}
+
+
 //FUNCTION THAT ALLOWS PLAYER TO DRAW CARD
 //run this function if someone clicks on the drawPile, give drawPile an event listener OR have it automatically run 
 const drawCard= ()=> {
@@ -212,6 +221,55 @@ const drawCard= ()=> {
 
 }
 
+//FUNCTION THAT CHECKS TO SEE IF CARD CAN BE PLAYED
+const checkCard= ()=> {
+    console.log(event.currentTarget); //can access event target from this function, which is not the function attached to the event listener 
+    
+    function updateArray(){ //nested function that will update the two card arrays when a move is made for specified player
+        if(whosTurn=== 'player1'){
+            let indexOfCard= arrayForPlayer1.indexOf(event.currentTarget); //finds the index of the card that MATCHES the card that was clicked, in the array of players cards
+            arrayForPlayer1.splice(indexOfCard, 1); //remove that card from visible cards array
+            player1Cards.splice(indexOfCard, 1); //also remove it from the array of card objects 
+            console.log('heres the changed comp cards', player1Cards);
+            console.log('heres the changed visible cards', arrayForPlayer1);
+        } else if(whosTurn=== 'player2'){
+            let indexOfCard= arrayForPlayer2.indexOf(event.currentTarget);  
+            arrayForPlayer2.splice(indexOfCard, 1); 
+            player2Cards.splice(indexOfCard, 1); 
+            console.log('heres the changed comp cards', player2Cards);
+            console.log('heres the changed visible cards', arrayForPlayer2);
+        }
+    }
+    
+    //!!!!!!!GOING TO HAVE TO ADD OPTION FOR WILD CARDS, WILD CARDS CAN BE PLAYED AT ANY TIME AND IT WILL HAVE TO GIVE A PROMPT ASKING WHAT COLOR THEY WANT TO CHANGE TO AND THEN THE CLASS OF THE CARD WILL CHANGE FROM BLACK TO THE INPUT ANSWER. can use: toLowerCase 
+    //conditions for if clicked card can be played
+    if(event.currentTarget.classList[1]=== topCardElement.classList[1]){
+        console.log('card can be played');
+        usedCardSpot.append(event.currentTarget);
+        updateArray();
+    } else if(event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){
+        console.log('card CAN be played');
+        usedCardSpot.append(event.currentTarget);
+        updateArray();
+    } else {
+        alert('That card cannot be played, try another card or draw a card');
+    }
+
+    //after moves are made, if/else if statement will change whos turn it is 
+    if(whosTurn==='player1'){
+        whosTurn= 'player2';
+    } else if(whosTurn=== 'player2'){
+        whosTurn= 'player1';
+    }
+    showCards(); //call showCards function to swap who is allowed to play
+}
+
+//FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
+const makeAMove=(event)=> {
+    //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
+    checkCard();
+}
+
 //FUNCTION THAT SERVES AS PLAYING THE GAME
 const playGame= ()=> {
     //make sure to use the classed and make a deck, then shuffle the deck. Currently that is being done in the call for it after the class is written but were going to want to move that down into the playGame function 
@@ -222,7 +280,7 @@ const playGame= ()=> {
     //dealCards();
     setTimeout(showCards, 6000);
     //showCards();
-    setTimeout(startCard, 9000);
+    setTimeout(startCard, 7000);
 }
 
 playGame(); //invoke playGame function, here just for trial and error 
