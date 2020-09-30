@@ -1,7 +1,7 @@
 console.log('(u-no) what it isssss');
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'reverse', '+2'];
+const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'reverse', '+2'];
 const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let whosTurn= 'player1';
@@ -162,7 +162,6 @@ const dealCards= ()=> {
 //FUNCTION THAT WILL PUT TOP CARD DOWN
 const startCard= ()=> {
     //we're using drawPile to make the code make more sense, but we could also just use newDeck.shuffledCards because that value updates as it continues through code(I think)
-   
     //rule is that if top card is one of the wild cards, draw another card as the start card 
     if(drawPile[0].type.includes('Wild')){ //checks the type of the first card in the drawPile to see if it includes the string, Wild, and if so:
         console.log('That cant be your start card...sorry');
@@ -179,21 +178,16 @@ const startCard= ()=> {
         drawPile.shift(); //make sure to remove that card from the drawPile
         arrayOfAllCards.shift(); //mirror with card element 
     }
-    console.log('this is the starting/top card', topCard); //able to access variable without declaring?? why
+    console.log('this is the starting/top card', topCard); 
     console.log('this is top card element', topCardElement);
     usedCardSpot.append(topCardElement);
 }
-//startCard();//invoke the function //WILL ALSO PROBABLY BE PASSED INTO AN EVENT LISTENER 
-//console.log(topCard); //can even access it outside of function?? HOW?? ASK THIS QUESTION 
-//answer: It is Not Recommended to declare a variable without var keyword. It can accidently overwrite an existing global variable. Scope of the variables declared without var keyword become global irrespective of where it is declared. Global variables can be accessed from anywhere in the web page.
-
 
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
 const removeCard= ()=> { 
     drawPile.shift(); //get rid of top card 
     arrayOfAllCards.shift(); //mirror with card element 
 }
-
 
 //FUNCTION THAT ADDS CARD TO OPPONENTS CARDS 
 const addCard= ()=> {
@@ -221,6 +215,7 @@ const drawCard= ()=> {
         arrayForPlayer2.push(arrayOfAllCards[0]);
         removeCard();
     }
+    showCards(); //have to update your cards to show the newly added card 
 }
 
 //FUNCTION THAT CHECKS TO SEE IF CARD CAN BE PLAYED
@@ -266,7 +261,7 @@ const checkCard= ()=> {
         || changeColor.toLowerCase()=== 'blue'){
             event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
             event.currentTarget.classList.add(changeColor.toLowerCase()); //and updates it to the color the user chose 
-        }
+        } 
         usedCardSpot.append(event.currentTarget);
         updateTopCard();
         updateArray();
@@ -308,11 +303,19 @@ const checkCard= ()=> {
 const makeAMove=(event)=> {
     //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
     checkCard();
-    //after moves are made, if/else if statement will change whos turn it is 
-    if(whosTurn==='player1'){
-        whosTurn= 'player2';
-    } else if(whosTurn=== 'player2'){
-        whosTurn= 'player1';
+    //after moves are made, if/else if statement will change whos turn it is
+    if(event.currentTarget.getAttribute('value')=== 'skip'){ //before switching whos turn it is, check to see if a skip card was used, if so, player stays the same
+        if(whosTurn==='player1'){
+            whosTurn= 'player1';
+        } else if(whosTurn=== 'player2'){
+            whosTurn= 'player2';
+        }
+    } else { //if not, then switch player turns 
+        if(whosTurn==='player1'){
+            whosTurn= 'player2';
+        } else if(whosTurn=== 'player2'){
+            whosTurn= 'player1';
+        }
     }
     showCards(); //call showCards function to swap who is allowed to play
 }
@@ -335,6 +338,7 @@ playGame(); //invoke playGame function, here just for trial and error
 document.addEventListener('DOMContentLoaded', ()=> {
     //first show rules of game then ask if they want to play
         //if yes, run play game function    
+    button.addEventListener('click', drawCard);
 })
 
 
