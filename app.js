@@ -190,35 +190,37 @@ const startCard= ()=> {
 
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
 const removeCard= ()=> { 
-    console.log('heres the array of all cards', arrayOfAllCards);
-    if(drawPile[0].value=== '+2'){ //special condition for +2 cards
-        drawPile.splice(0,2); //signifies drawing 2 cards 
-        arrayOfAllCards.splice(0,2); //mirror with card element 
-    } else if(drawPile[0].value=== '+4'){ //special condition for +4 cards 
-        drawPile.splice(0,4); //signifies drawing 4 cards 
-        arrayOfAllCards.splice(0,4); //mirror with card element 
-    } else {
-        drawPile.shift(); //get rid of top card 
-        arrayOfAllCards.shift(); //mirror with card element 
-    }
-    //add a while statement to check if there are items in drawPile array
-        //if not, reshuffle the cards 
+    drawPile.shift(); //get rid of top card 
+    arrayOfAllCards.shift(); //mirror with card element 
 }
 
 
+//FUNCTION THAT ADDS CARD TO OPPONENTS CARDS 
+const addCard= ()=> {
+    //pick up top card and add it to opposite players array
+    if(whosTurn=== 'player1'){
+        player2Cards.push(drawPile[0]);
+        arrayForPlayer2.push(arrayOfAllCards[0]);
+        removeCard();
+    } else if(whosTurn=== 'player2'){
+        player1Cards.push(drawPile[0]);
+        arrayForPlayer1.push(arrayOfAllCards[0]);
+        removeCard();
+    }
+}
+
 //FUNCTION THAT ALLOWS PLAYER TO DRAW CARD
-//run this function if someone clicks on the drawPile, give drawPile an event listener OR have it automatically run 
+//run this function if someone clicks on the drawPile, give drawPile an event listener OR have it automatically run
 const drawCard= ()=> {
-    //pick up top card and add it to players array
     if(whosTurn=== 'player1'){
         player1Cards.push(drawPile[0]);
+        arrayForPlayer1.push(arrayOfAllCards[0]);
         removeCard();
     } else if(whosTurn=== 'player2'){
         player2Cards.push(drawPile[0]);
+        arrayForPlayer2.push(arrayOfAllCards[0]);
         removeCard();
     }
-    //write some statements that will check if the card is a +2 or a +4
-
 }
 
 //FUNCTION THAT CHECKS TO SEE IF CARD CAN BE PLAYED
@@ -254,11 +256,29 @@ const checkCard= ()=> {
         }
     }
 
-
-        //!!!!!!!GOING TO HAVE TO ADD OPTION FOR WILD CARDS, WILD CARDS CAN BE PLAYED AT ANY TIME AND IT WILL HAVE TO GIVE A PROMPT ASKING WHAT COLOR THEY WANT TO CHANGE TO AND THEN THE CLASS OF THE CARD WILL CHANGE FROM BLACK TO THE INPUT ANSWER. can use: toLowerCase 
-        
     //conditions for if clicked card can be played
-    if(event.currentTarget.classList[1]=== topCardElement.classList[1]){
+    if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
+        let changeColor= prompt('What color type would you like to change to?', 'Red/Yellow/Green/Blue'); //allows user to enter new color value
+        //if user entered any of the appropriate colors 
+        if(changeColor.toLowerCase()=== 'red'
+        || changeColor.toLowerCase()=== 'yellow'
+        || changeColor.toLowerCase()=== 'green'
+        || changeColor.toLowerCase()=== 'blue'){
+            event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
+            event.currentTarget.classList.add(changeColor.toLowerCase()); //and updates it to the color the user chose 
+        }
+        usedCardSpot.append(event.currentTarget);
+        updateTopCard();
+        updateArray();
+        topCardElement= event.currentTarget;
+
+        //within the condition for wild card, check if its a +4 and if so, run the drawCard function 4 times 
+        if(event.currentTarget.getAttribute('value')=== '+4'){
+            for(let i=0; i<4; i++){
+                addCard();
+            }
+        }
+    } else if(event.currentTarget.classList[1]=== topCardElement.classList[1]){ //classList at index 1 is the class equal to the type
         console.log('card can be played');
         usedCardSpot.append(event.currentTarget);
         updateTopCard(); //do this before updating the array 
@@ -275,6 +295,13 @@ const checkCard= ()=> {
     }
     console.log('top card element', topCardElement);
     console.log('top card', topCard);
+    //after all that, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
+    if(event.currentTarget.getAttribute('value')=== '+2'){
+        console.log('you clicked a +2');
+        for(let i=0; i<2; i++){
+            addCard();
+        }
+    }
 }
 
 //FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
