@@ -1,7 +1,7 @@
 console.log('(u-no) what it isssss');
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'switch', 'reverse', '+2'];
+const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'reverse', '+2'];
 const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let whosTurn= 'player1';
@@ -189,7 +189,7 @@ const startCard= ()=> {
 
 
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
-const removeCard= ()=> { //!!!!!HAVE TO DO ALL THIS FOR THE ARRAYOFALLCARDS
+const removeCard= ()=> { 
     console.log('heres the array of all cards', arrayOfAllCards);
     if(drawPile[0].value=== '+2'){ //special condition for +2 cards
         drawPile.splice(0,2); //signifies drawing 2 cards 
@@ -225,7 +225,8 @@ const drawCard= ()=> {
 const checkCard= ()=> {
     console.log(event.currentTarget); //can access event target from this function, which is not the function attached to the event listener 
     
-    function updateArray(){ //nested function that will update the two card arrays when a move is made for specified player
+    //NESTED FUNCTION THAT WILL UPDATE THE TWO CARD ARRAYS WHEN A MOVE IS MADE FOR A SPECIFIED PLAYER
+    function updateArray(){ 
         if(whosTurn=== 'player1'){
             let indexOfCard= arrayForPlayer1.indexOf(event.currentTarget); //finds the index of the card that MATCHES the card that was clicked, in the array of players cards
             arrayForPlayer1.splice(indexOfCard, 1); //remove that card from visible cards array
@@ -241,20 +242,45 @@ const checkCard= ()=> {
         }
     }
     
-    //!!!!!!!GOING TO HAVE TO ADD OPTION FOR WILD CARDS, WILD CARDS CAN BE PLAYED AT ANY TIME AND IT WILL HAVE TO GIVE A PROMPT ASKING WHAT COLOR THEY WANT TO CHANGE TO AND THEN THE CLASS OF THE CARD WILL CHANGE FROM BLACK TO THE INPUT ANSWER. can use: toLowerCase 
+    //NESTED FUNCTION THAT WILL CHANGE THE TOPCARD VARIABLE
+    function updateTopCard() {
+        let index;
+        if(whosTurn=== 'player1'){
+            index= arrayForPlayer1.indexOf(event.currentTarget);
+            topCard= player1Cards[index];
+        } else if(whosTurn=== 'player2'){
+            index=arrayForPlayer2.indexOf(event.currentTarget);
+            topCard= player2Cards[index];
+        }
+    }
+
+
+        //!!!!!!!GOING TO HAVE TO ADD OPTION FOR WILD CARDS, WILD CARDS CAN BE PLAYED AT ANY TIME AND IT WILL HAVE TO GIVE A PROMPT ASKING WHAT COLOR THEY WANT TO CHANGE TO AND THEN THE CLASS OF THE CARD WILL CHANGE FROM BLACK TO THE INPUT ANSWER. can use: toLowerCase 
+        
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]=== topCardElement.classList[1]){
         console.log('card can be played');
         usedCardSpot.append(event.currentTarget);
+        updateTopCard(); //do this before updating the array 
         updateArray();
+        topCardElement= event.currentTarget; //change the topCardElement variable to equal the card that was picked
     } else if(event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){
         console.log('card CAN be played');
         usedCardSpot.append(event.currentTarget);
+        updateTopCard(); 
         updateArray();
+        topCardElement= event.currentTarget;
     } else {
         alert('That card cannot be played, try another card or draw a card');
     }
+    console.log('top card element', topCardElement);
+    console.log('top card', topCard);
+}
 
+//FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
+const makeAMove=(event)=> {
+    //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
+    checkCard();
     //after moves are made, if/else if statement will change whos turn it is 
     if(whosTurn==='player1'){
         whosTurn= 'player2';
@@ -262,12 +288,6 @@ const checkCard= ()=> {
         whosTurn= 'player1';
     }
     showCards(); //call showCards function to swap who is allowed to play
-}
-
-//FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
-const makeAMove=(event)=> {
-    //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
-    checkCard();
 }
 
 //FUNCTION THAT SERVES AS PLAYING THE GAME
