@@ -16,6 +16,8 @@ let arrayOfAllCards= [];
 let arrayForPlayer1= [];
 let arrayForPlayer2=[];
 let arrayOfUsedCards=[];
+//create a p element message that can be changed depending on the case
+let message= document.createElement('p');
 
 //MIGHT BE BETTER TO USE CLASS SO YOU CAN ACCESS TYPE AND VALUE 
 //first made a class Card that takes in 2 attributes, the type and value 
@@ -292,19 +294,39 @@ const checkCard= ()=> {
             usedCards.push(topCard);
         }
     }
-
+   
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
-
-        let changeColor= prompt('What color type would you like to change to?', 'Red/Yellow/Green/Blue'); //allows user to enter new color value
-        //if user entered any of the appropriate colors 
-        if(changeColor.toLowerCase()=== 'red'
-        || changeColor.toLowerCase()=== 'yellow'
-        || changeColor.toLowerCase()=== 'green'
-        || changeColor.toLowerCase()=== 'blue'){
-            event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
-            event.currentTarget.classList.add(changeColor.toLowerCase()); //and updates it to the color the user chose 
-        } 
+        let colorChange;
+        //let message= document.createElement('p');
+        message.innerText= 'Please select the square of the color you would like to switch to.';
+        putMessage.append(message);
+        //create clickable div boxes
+        for(let c=0; c<cardType.length; c++){
+            let choiceSquare= document.createElement('div');
+            choiceSquare.classList.add('choiceSquare');
+            choiceSquare.classList.add(cardType[c]);
+            choiceSquare.addEventListener('click', changeColor);
+            putSquare.append(choiceSquare);
+        }
+        function changeColor(e) {
+            //code that switches up the classes 
+            console.log('color of the chosen square', e.target.classList[1]);
+            colorChange= e.target.classList[1];
+            console.log('heres the colorChange', colorChange);
+        }
+        // let changeColor= prompt('What color type would you like to change to?', 'Red/Yellow/Green/Blue'); //allows user to enter new color value
+        // //if user entered any of the appropriate colors 
+        // if(changeColor.toLowerCase()=== 'red'
+        // || changeColor.toLowerCase()=== 'yellow'
+        // || changeColor.toLowerCase()=== 'green'
+        // || changeColor.toLowerCase()=== 'blue'){
+        //     event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
+        //     event.currentTarget.classList.add(changeColor.toLowerCase()); //and updates it to the color the user chose 
+        // } 
+        console.log('can you access colorChange', colorChange);
+        event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
+        event.currentTarget.classList.add(colorChange); //and updates it to the color the user chose 
         usedCardSpot.append(event.currentTarget);
         updateTopCard();
         updateArray();
@@ -332,42 +354,61 @@ const checkCard= ()=> {
         topCardElement= event.currentTarget;
         arrayOfUsedCards.push(topCardElement);
     } else {
-        alert('That card cannot be played, try another card or draw a card');
+        message.innerText= 'That card cannot be played, try another card or draw a card';
+        putMessage.append(message);
         //call makeAMove function
     }
-    console.log('top card element', topCardElement);
-    console.log('top card', topCard);
-    console.log('heres the rest of the draw pile', drawPile);
-    console.log('and heres the card elements in draw pile', arrayOfAllCards);
-    console.log('heres the used cards array', arrayOfUsedCards);
-    console.log('and heres the used cards object', usedCards);
-    //after all that, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
-    if(event.currentTarget.getAttribute('value')=== '+2'){
-        console.log('you clicked a +2');
-        for(let i=0; i<2; i++){
-            addCard();
-        }
-    }
+    // console.log('top card element', topCardElement);
+    // console.log('top card', topCard);
+    // console.log('heres the rest of the draw pile', drawPile);
+    // console.log('and heres the card elements in draw pile', arrayOfAllCards);
+    // console.log('heres the used cards array', arrayOfUsedCards);
+    // console.log('and heres the used cards object', usedCards);
+    // //after all that, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
+    // if(event.currentTarget.getAttribute('value')=== '+2'){
+    //     console.log('you clicked a +2');
+    //     for(let i=0; i<2; i++){
+    //         addCard();
+    //     }
+    // }
     //event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
 }
 
 //FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
 const makeAMove=(event)=> {
     //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
+    // while(putMessage.firstChild){
+    //     putMessage.remove(putMessage.firstChild);
+    // }
+    // while(putSquare.firstChild){
+    //     putSquare.remove(putSquare.firstChild);
+    // }
+
     checkCard();
-    //after moves are made, if/else if statement will change whos turn it is
-    if(event.currentTarget.getAttribute('value')=== 'skip'){ //before switching whos turn it is, check to see if a skip card was used, if so, player stays the same
-        if(whosTurn==='player1'){
-            whosTurn= 'player1';
-        } else if(whosTurn=== 'player2'){
-            whosTurn= 'player2';
+    if(arrayOfUsedCards[arrayOfUsedCards.length-1]=== event.currentTarget){ //checks if a card has been placed down/played before adding 2 and switching players
+         //if the card was played, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
+         if(event.currentTarget.getAttribute('value')=== '+2'){
+            console.log('you clicked a +2');
+            for(let i=0; i<2; i++){
+                addCard();
+            }
         }
-    } else { //if not, then switch player turns 
-        if(whosTurn==='player1'){
-            whosTurn= 'player2';
-        } else if(whosTurn=== 'player2'){
-            whosTurn= 'player1';
+        if(event.currentTarget.getAttribute('value')=== 'skip'){ //before switching whos turn it is, check to see if a skip card was used, if so, player stays the same
+            if(whosTurn==='player1'){
+                whosTurn= 'player1';
+            } else if(whosTurn=== 'player2'){
+                whosTurn= 'player2';
+            }
+        } else { //if not, then switch player turns 
+            if(whosTurn==='player1'){
+                whosTurn= 'player2';
+            } else if(whosTurn=== 'player2'){
+                whosTurn= 'player1';
+            }
         }
+    } else {
+        console.log('the message', putMessage.firstChild);
+        putMessage.removeChild(putMessage.firstChild);
     }
     showCards(); //call showCards function to swap who is allowed to play
     checkWin();
@@ -377,13 +418,17 @@ const makeAMove=(event)=> {
 //called for every move that is made 
 const checkWin= ()=> {
     if(player1Cards.length=== 1){
-        alert('Player One: UNO');
+        message.innerText= 'Player 1: UNO';
+        putMessage.append(message);
     } else if(player2Cards.length=== 1){
-        alert('Player Two: UNO');
+        message.innerText= 'Player 2: UNO';
+        putMessage.append(message);
     } else if(player1Cards.length=== 0){
-        alert('Player 1 has won the game!');
+        message.innerText= 'Player 1 has won the game!';
+        putMessage.append(message);
     } else if(player2Cards.length=== 0){
-        alert('Player 2 has won the game!');
+        message.innerText= 'Player 2 has won the game!';
+        putMessage.append(message);
     }
 }
 
