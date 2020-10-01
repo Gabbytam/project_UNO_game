@@ -297,7 +297,7 @@ const checkCard= ()=> {
    
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
-        let colorChange;
+        let wildCard= event.currentTarget;
         //let message= document.createElement('p');
         message.innerText= 'Please select the square of the color you would like to switch to.';
         putMessage.append(message);
@@ -306,33 +306,31 @@ const checkCard= ()=> {
             let choiceSquare= document.createElement('div');
             choiceSquare.classList.add('choiceSquare');
             choiceSquare.classList.add(cardType[c]);
-            choiceSquare.addEventListener('click', changeColor);
+            choiceSquare.addEventListener('click', changeWildCard);
             putSquare.append(choiceSquare);
         }
-        function changeColor(e) {
+        function changeWildCard(e) {
             //code that switches up the classes 
             console.log('color of the chosen square', e.target.classList[1]);
-            colorChange= e.target.classList[1];
-            console.log('heres the colorChange', colorChange);
+            let colorChange= e.target.classList[1];
+            //checkCard();
+            wildCard.classList.remove('black'); //gets rid of the class of 'black'
+            wildCard.classList.add(colorChange);
+            usedCardSpot.append(wildCard);
+            // topCardElement= wildCard;
+            // console.log('this is topCardElement', topCardElement);
+            // arrayOfUsedCards.push(topCardElement);
         }
-        // let changeColor= prompt('What color type would you like to change to?', 'Red/Yellow/Green/Blue'); //allows user to enter new color value
-        // //if user entered any of the appropriate colors 
-        // if(changeColor.toLowerCase()=== 'red'
-        // || changeColor.toLowerCase()=== 'yellow'
-        // || changeColor.toLowerCase()=== 'green'
-        // || changeColor.toLowerCase()=== 'blue'){
-        //     event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
-        //     event.currentTarget.classList.add(changeColor.toLowerCase()); //and updates it to the color the user chose 
-        // } 
-        console.log('can you access colorChange', colorChange);
-        event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
-        event.currentTarget.classList.add(colorChange); //and updates it to the color the user chose 
-        usedCardSpot.append(event.currentTarget);
+
+        //!!!!!!HELP: want this code only to run after a color is clicked, how
+        //event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
+        //event.currentTarget.classList.add(colorChange); //and updates it to the color the user chose 
+        //usedCardSpot.append(event.currentTarget);
         updateTopCard();
         updateArray();
         topCardElement= event.currentTarget;
+        console.log('this is topCardElement', topCardElement);
         arrayOfUsedCards.push(topCardElement);
-
         //within the condition for wild card, check if its a +4 and if so, run the drawCard function 4 times 
         if(event.currentTarget.getAttribute('value')=== '+4'){
             for(let i=0; i<4; i++){
@@ -356,39 +354,24 @@ const checkCard= ()=> {
     } else {
         message.innerText= 'That card cannot be played, try another card or draw a card';
         putMessage.append(message);
-        //call makeAMove function
     }
-    // console.log('top card element', topCardElement);
-    // console.log('top card', topCard);
-    // console.log('heres the rest of the draw pile', drawPile);
-    // console.log('and heres the card elements in draw pile', arrayOfAllCards);
-    // console.log('heres the used cards array', arrayOfUsedCards);
-    // console.log('and heres the used cards object', usedCards);
-    // //after all that, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
-    // if(event.currentTarget.getAttribute('value')=== '+2'){
-    //     console.log('you clicked a +2');
-    //     for(let i=0; i<2; i++){
-    //         addCard();
-    //     }
-    // }
     //event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
 }
 
 //FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
 const makeAMove=(event)=> {
     //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
-    // while(putMessage.firstChild){
-    //     putMessage.remove(putMessage.firstChild);
-    // }
-    // while(putSquare.firstChild){
-    //     putSquare.remove(putSquare.firstChild);
-    // }
-
-    checkCard();
+    //at the beginning of each move, check if there's a message, if so, remove it
+    while(putMessage.firstChild){
+        putMessage.removeChild(putMessage.firstChild);
+    }
+    while(putSquare.firstChild){
+        putSquare.removeChild(putSquare.firstChild);
+    }
+    checkCard();//call the checkCard function for play conditions
     if(arrayOfUsedCards[arrayOfUsedCards.length-1]=== event.currentTarget){ //checks if a card has been placed down/played before adding 2 and switching players
-         //if the card was played, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
-         if(event.currentTarget.getAttribute('value')=== '+2'){
-            console.log('you clicked a +2');
+        //if the card was played, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
+        if(event.currentTarget.getAttribute('value')=== '+2'){
             for(let i=0; i<2; i++){
                 addCard();
             }
@@ -406,10 +389,7 @@ const makeAMove=(event)=> {
                 whosTurn= 'player1';
             }
         }
-    } else {
-        console.log('the message', putMessage.firstChild);
-        putMessage.removeChild(putMessage.firstChild);
-    }
+    } 
     showCards(); //call showCards function to swap who is allowed to play
     checkWin();
 }
