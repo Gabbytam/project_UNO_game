@@ -4,16 +4,18 @@ const cardType= ['red', 'yellow', 'green', 'blue'];
 const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'reverse', '+2'];
 const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
+let usedCards= [];
 let whosTurn= 'player1';
 let topCard;
 let topCardElement;
 //initialize empty arrays for the player's cards 
 let player1Cards= []; //this used to see in console 
 let player2Cards=[]; //this used to see in console
-//arrays for the visual cards, will be attached to div elements so we can get rid of above arrays later
+//arrays for the visual cards, will be attached to div elements 
 let arrayOfAllCards= []; 
 let arrayForPlayer1= [];
 let arrayForPlayer2=[];
+let arrayOfUsedCards=[];
 
 //MIGHT BE BETTER TO USE CLASS SO YOU CAN ACCESS TYPE AND VALUE 
 //first made a class Card that takes in 2 attributes, the type and value 
@@ -56,6 +58,9 @@ class Factory {
         }
         this.shuffledCards= deck; //put shuffled deck equal to the shuffledCards array, even though it changes the original deckOfCards array 
     }
+    // addCard(card){
+    //     this.deckOfCards.push(card);
+    // }
 }
 
 //HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS to make the deck of cards and shuffle them 
@@ -65,36 +70,38 @@ newDeck.makeDeck(); //call the makeDeck function on deck
 // console.log('this is all cards', allCards);
 newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
 console.log(newDeck); //now we see that deck contains a filled deckOfCards array
+//const newUsedCards= new Factory();
+
 
 //FUNCTION THAT CREATES VISABLE CARDS
 const cardMaker= ()=> {
     for(let i= 0; i<newDeck.shuffledCards.length; i++){ //loops through the array that is all the shuffled cards 
-        let seeAllCards= document.createElement('div');
-        // seeAllCards.addEventListener('click', makeAMove);
-        seeAllCards.id= i;
-        seeAllCards.setAttribute('value', newDeck.shuffledCards[i].value); //give all visible cards a value attribute equal to the card value
-        seeAllCards.classList.add('card'); //give a class to style
+        let seeCard= document.createElement('div');
+        // seeCard.addEventListener('click', makeAMove);
+        seeCard.id= i;
+        seeCard.setAttribute('value', newDeck.shuffledCards[i].value); //give all visible cards a value attribute equal to the card value
+        seeCard.classList.add('card'); //give a class to style
         //if else statements that will give elements a class name/ color depending on their type
         if(newDeck.shuffledCards[i].type=== 'red'){
-            seeAllCards.classList.add('red');
+            seeCard.classList.add('red');
         } else if(newDeck.shuffledCards[i].type=== 'yellow'){
-            seeAllCards.classList.add('yellow');
+            seeCard.classList.add('yellow');
         } else if(newDeck.shuffledCards[i].type=== 'green'){
-            seeAllCards.classList.add('green');
+            seeCard.classList.add('green');
         } else if(newDeck.shuffledCards[i].type=== 'blue'){
-            seeAllCards.classList.add('blue');
+            seeCard.classList.add('blue');
         } else { //for the wild cards
-            seeAllCards.classList.add('black');
+            seeCard.classList.add('black');
         }
         let cardInfo= document.createElement('h1'); //create an element that can add the text info 
         cardInfo.innerText= `Type: ${newDeck.shuffledCards[i].type} Value: ${newDeck.shuffledCards[i].value}`;
-        //seeAllCards.style.position= 'absolute'; //makes all the cards stack on top of each other
-        seeAllCards.append(cardInfo); //add the h1 with info onto the card div 
-        deckSpot.append(seeAllCards); //then append the card to the existing html div so we can see it in the browser
-        arrayOfAllCards.push(seeAllCards); //adds all the newly created cards into an array so they can be accessed by other functions 
+        //seeCard.style.position= 'absolute'; //makes all the cards stack on top of each other
+        seeCard.append(cardInfo); //add the h1 with info onto the card div 
+        deckSpot.append(seeCard); //then append the card to the existing html div so we can see it in the browser
+        arrayOfAllCards.push(seeCard); //adds all the newly created cards into an array so they can be accessed by other functions 
     } 
 }
-console.log('heres the array', arrayOfAllCards); //test
+//console.log('heres the array', arrayOfAllCards); //test
 
 //FUNCTION THAT WILL MOVE PLAYER CARDS TO THEIR RESPECTIVE HOLDING CELLS
 const moveCards= ()=> {
@@ -171,12 +178,16 @@ const startCard= ()=> {
         drawPile.shift(); //second, remove it from the beginning of the drawPile array
         arrayOfAllCards.shift(); //mirror with card element 
         topCard=drawPile[0]; //third, set the top card to the NEW first card in the drawPile array
-        topCardElement=arrayOfAllCards[0]; //mirror with card element 
+        topCardElement=arrayOfAllCards[0]; //mirror with card element
+        usedCards.push(topCard);
+        arrayOfUsedCards.push(topCardElement);
     } else { //for any card that isnt type 'Wild'
         topCard=drawPile[0]; //top card is equal to first card in array
         topCardElement=arrayOfAllCards[0]; //mirror with card element 
         drawPile.shift(); //make sure to remove that card from the drawPile
         arrayOfAllCards.shift(); //mirror with card element 
+        usedCards.push(topCard);
+        arrayOfUsedCards.push(topCardElement);
     }
     console.log('this is the starting/top card', topCard); 
     console.log('this is top card element', topCardElement);
@@ -201,6 +212,38 @@ const addCard= ()=> {
         arrayForPlayer1.push(arrayOfAllCards[0]);
         removeCard();
     }
+    reshuffleDeck(); //run this function that checks if deck is empty
+}
+
+//FUNCTION THAT WILL RESTOCK THE DECK PILE 
+//to be checked before each draw from the deck 
+const reshuffleDeck= ()=> {
+    if(drawPile.length=== 0){//check if the drawPile has no more cards 
+        console.log('THERE ARE NO MORE CARDS IN THE DECK');
+        usedCards.splice(usedCards.length-1, 1); //take out the last card in the usedCard, which signifies the topCard
+        arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
+
+        //grab the used cards and shuffle them
+
+        //update drawPile and arrayOfAllCards to equal the above values 
+        drawPile=usedCards;
+        arrayOfAllCards= arrayOfUsedCards;
+
+        for(let i=0; i<arrayOfAllCards.length; i++){
+            //make all the wildCards class back to black
+            if(drawPile[i].type.includes('Wild')){
+                //remove second class 
+                for(let j=0; j<cardType.length; j++){ //find the color of the card (its class name) by iterating through cardType array and finding the match
+                    if(arrayOfAllCards[i].classList[1]=== cardType[j]){
+                        newColor= cardType[j]; //if it matches, set a variable to that color
+                    }
+                }
+                arrayOfAllCards[i].classList.remove(`${newColor}`); //pass in that variable to remove it from that card
+                arrayOfAllCards[i].classList.add('black'); //and set it back to black
+            }
+            deckSpot.append(arrayOfAllCards[i]); //after all that, append it
+        }
+    }
 }
 
 //FUNCTION THAT ALLOWS PLAYER TO DRAW CARD
@@ -216,11 +259,12 @@ const drawCard= ()=> {
         removeCard();
     }
     showCards(); //have to update your cards to show the newly added card 
+    reshuffleDeck(); //call reshuffledeck function after a card is drawn 
 }
 
 //FUNCTION THAT CHECKS TO SEE IF CARD CAN BE PLAYED
 const checkCard= ()=> {
-    console.log(event.currentTarget); //can access event target from this function, which is not the function attached to the event listener 
+    //console.log(event.currentTarget); //can access event target from this function, which is not the function attached to the event listener 
     
     //NESTED FUNCTION THAT WILL UPDATE THE TWO CARD ARRAYS WHEN A MOVE IS MADE FOR A SPECIFIED PLAYER
     function updateArray(){ 
@@ -228,14 +272,10 @@ const checkCard= ()=> {
             let indexOfCard= arrayForPlayer1.indexOf(event.currentTarget); //finds the index of the card that MATCHES the card that was clicked, in the array of players cards
             arrayForPlayer1.splice(indexOfCard, 1); //remove that card from visible cards array
             player1Cards.splice(indexOfCard, 1); //also remove it from the array of card objects 
-            console.log('heres the changed comp cards', player1Cards);
-            console.log('heres the changed visible cards', arrayForPlayer1);
         } else if(whosTurn=== 'player2'){
             let indexOfCard= arrayForPlayer2.indexOf(event.currentTarget);  
             arrayForPlayer2.splice(indexOfCard, 1); 
             player2Cards.splice(indexOfCard, 1); 
-            console.log('heres the changed comp cards', player2Cards);
-            console.log('heres the changed visible cards', arrayForPlayer2);
         }
     }
     
@@ -244,15 +284,18 @@ const checkCard= ()=> {
         let index;
         if(whosTurn=== 'player1'){
             index= arrayForPlayer1.indexOf(event.currentTarget);
-            topCard= player1Cards[index];
+            topCard= player1Cards[index]; 
+            usedCards.push(topCard); //update the usedCards array 
         } else if(whosTurn=== 'player2'){
             index=arrayForPlayer2.indexOf(event.currentTarget);
             topCard= player2Cards[index];
+            usedCards.push(topCard);
         }
     }
 
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
+
         let changeColor= prompt('What color type would you like to change to?', 'Red/Yellow/Green/Blue'); //allows user to enter new color value
         //if user entered any of the appropriate colors 
         if(changeColor.toLowerCase()=== 'red'
@@ -266,6 +309,7 @@ const checkCard= ()=> {
         updateTopCard();
         updateArray();
         topCardElement= event.currentTarget;
+        arrayOfUsedCards.push(topCardElement);
 
         //within the condition for wild card, check if its a +4 and if so, run the drawCard function 4 times 
         if(event.currentTarget.getAttribute('value')=== '+4'){
@@ -279,17 +323,24 @@ const checkCard= ()=> {
         updateTopCard(); //do this before updating the array 
         updateArray();
         topCardElement= event.currentTarget; //change the topCardElement variable to equal the card that was picked
+        arrayOfUsedCards.push(topCardElement); //update the arrayOfUsed cards to include the newest topCardElement 
     } else if(event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){
         console.log('card CAN be played');
         usedCardSpot.append(event.currentTarget);
         updateTopCard(); 
         updateArray();
         topCardElement= event.currentTarget;
+        arrayOfUsedCards.push(topCardElement);
     } else {
         alert('That card cannot be played, try another card or draw a card');
+        //call makeAMove function
     }
     console.log('top card element', topCardElement);
     console.log('top card', topCard);
+    console.log('heres the rest of the draw pile', drawPile);
+    console.log('and heres the card elements in draw pile', arrayOfAllCards);
+    console.log('heres the used cards array', arrayOfUsedCards);
+    console.log('and heres the used cards object', usedCards);
     //after all that, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
     if(event.currentTarget.getAttribute('value')=== '+2'){
         console.log('you clicked a +2');
@@ -297,6 +348,7 @@ const checkCard= ()=> {
             addCard();
         }
     }
+    //event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
 }
 
 //FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
@@ -318,7 +370,23 @@ const makeAMove=(event)=> {
         }
     }
     showCards(); //call showCards function to swap who is allowed to play
+    checkWin();
 }
+
+//FUNCTION THAT CHECKS FOR A WIN
+//called for every move that is made 
+const checkWin= ()=> {
+    if(player1Cards.length=== 1){
+        alert('Player One: UNO');
+    } else if(player2Cards.length=== 1){
+        alert('Player Two: UNO');
+    } else if(player1Cards.length=== 0){
+        alert('Player 1 has won the game!');
+    } else if(player2Cards.length=== 0){
+        alert('Player 2 has won the game!');
+    }
+}
+
 
 //FUNCTION THAT SERVES AS PLAYING THE GAME
 const playGame= ()=> {
