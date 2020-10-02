@@ -62,7 +62,7 @@ body {
 
 #viewCard {
     background: rgba(255, 19, 19, 0.452);
-    width: 75%;
+    width: 100%;
     height: 210px;
     display: flex;
     flex-direction: row; /* this gets the cards to appear side by side in the viewCard div*/
@@ -122,13 +122,11 @@ body {
 }
 
 .card {
-    /* border: 1px solid black;  */
     margin: 0 auto;
-    font-size: 10px; 
+    font-size: 60px; 
     display: flex;
     justify-content: space-between; /*this styling is for the cards when theyre in the viewCard section*/
     position: absolute; /*allows all the cards to be stacked on top of each other*/
-    text-align: center;
     font-family: 'Fascinate', cursive;
 }
 
@@ -181,4 +179,21 @@ li {
 
 ul {
     margin: .3em;
+}
+
+h1 {
+    margin: 0 auto;
+    text-align: center;
+    align-self: center;
+    margin-bottom: 35px;
+}
+
+#makeSmaller {
+    font-size: 50px;
+    align-self: center; 
+    margin-bottom: 0;
+}
+
+#evenSmaller {
+    font-size: 40px;
 }

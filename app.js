@@ -1,8 +1,8 @@
 console.log('(u-no) what it isssss');
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'reverse', '+2'];
-const specialCardValue= ['Wild Card', 'Wild Card +4'];
+const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'];
+const specialCardType= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let usedCards= [];
 let whosTurn= 'player1';
@@ -43,9 +43,9 @@ class Factory {
             }
         }   
         for(let f=0; f<4; f++){ //need to make 4 of each of these cards
-            let card= new Card(specialCardValue[0], -1); //creates card using Card class passing in a specified type and value
+            let card= new Card(specialCardType[0], -1); //creates card using Card class passing in a specified type and value
             this.deckOfCards.push(card); //push that before moving on
-            card= new Card(specialCardValue[1], '+4'); //same thing as above but for different type and value 
+            card= new Card(specialCardType[1], '+4'); //same thing as above but for different type and value 
             this.deckOfCards.push(card);
 
         }
@@ -88,8 +88,22 @@ const cardMaker= ()=> {
             seeCard.classList.add('black');
         }
         let cardInfo= document.createElement('h1'); //create an element that can add the text info 
-        cardInfo.innerText= `Type: ${newDeck.shuffledCards[i].type} Value: ${newDeck.shuffledCards[i].value}`;
-        //seeCard.style.position= 'absolute'; //makes all the cards stack on top of each other
+        //cardInfo.innerText= `Type: ${newDeck.shuffledCards[i].type} Value: ${newDeck.shuffledCards[i].value}`;
+        //special styling and text assignment depending on card
+        if(newDeck.shuffledCards[i].value=== -1){
+            cardInfo.innerText= 'Wild Card';
+        } else if(newDeck.shuffledCards[i].value=== '+4'){
+            cardInfo.innerText= 'Wild Card +4';
+        } else {
+            cardInfo.innerText= newDeck.shuffledCards[i].value;
+        }
+        if(newDeck.shuffledCards[i].value=== 'skip'
+        || newDeck.shuffledCards[i].value=== 'rvs'){
+            cardInfo.id= 'makeSmaller';
+        } else if(newDeck.shuffledCards[i].value=== -1
+        || newDeck.shuffledCards[i].value=== '+4'){
+            cardInfo.id= 'evenSmaller';
+        }
         seeCard.append(cardInfo); //add the h1 with info onto the card div 
         deckSpot.append(seeCard); //then append the card to the existing html div so we can see it in the browser
         arrayOfAllCards.push(seeCard); //adds all the newly created cards into an array so they can be accessed by other functions 
@@ -180,7 +194,8 @@ const startCard= ()=> {
 //FUNCTION THAT WILL RESTOCK THE DECK PILE 
 //to be checked before each draw from the deck 
 const reshuffleDeck= ()=> {
-    if(drawPile.length=== 0){//check if the drawPile has no more cards 
+    if(drawPile.length=== 0
+    || arrayOfAllCards=== 0){//check if the drawPile has no more cards 
         console.log('THERE ARE NO MORE CARDS IN THE DECK');
         usedCards.splice(usedCards.length-1, 1); //take out the last card in the usedCard, which signifies the topCard
         arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
