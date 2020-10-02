@@ -319,18 +319,21 @@ const checkCard= ()=> {
             wildCard.classList.remove('black'); //gets rid of the class of 'black'
             wildCard.classList.add(colorChange);
             usedCardSpot.append(wildCard);
-            topCardElement= wildCard;
-            arrayOfUsedCards.push(topCardElement);
+            topCardElement= wildCard; //assigning the topCard as the wildCard so it can be added to the arrayOfUsedCards
+            arrayOfUsedCards.push(topCardElement); 
+            //the following code is repeatative of the code within the makeMove function. We have to have it here as well tho because as we are waiting for a response from the user, the code in MakeMove runs through without waiting. 
+            if(whosTurn==='player1'){
+                whosTurn= 'player2';
+                clearMessage();
+            } else if(whosTurn=== 'player2'){
+                whosTurn= 'player1';
+                clearMessage();
+            }
+            showCards();
+            checkWin();
         }
-
-        //!!!!!!HELP: want this code only to run after a color is clicked, how
-        //event.currentTarget.classList.remove('black'); //gets rid of the class of 'black'
-        //event.currentTarget.classList.add(colorChange); //and updates it to the color the user chose 
-        //usedCardSpot.append(event.currentTarget);
-        updateTopCard();
+        updateTopCard(); //these two call functions have to be outside the changeWildCard function because the refer to the currentTarget which needs to be the card not the box. It also works just fine because the code reaches this section before the turn is switched (which occurs after user makes a choice)
         updateArray();
-        //topCardElement= event.currentTarget;
-        //arrayOfUsedCards.push(topCardElement);
         //within the condition for wild card, check if its a +4 and if so, run the drawCard function 4 times 
         if(event.currentTarget.getAttribute('value')=== '+4'){
             for(let i=0; i<4; i++){
@@ -381,6 +384,7 @@ const makeAMove=(event)=> {
                 addCard();
             }
         }
+        
         if(event.currentTarget.getAttribute('value')=== 'skip'){ //before switching whos turn it is, check to see if a skip card was used, if so, player stays the same
             if(whosTurn==='player1'){
                 whosTurn= 'player1';
@@ -398,9 +402,10 @@ const makeAMove=(event)=> {
                 clearMessage();
             }
         }
+        checkWin(); //moved this function call up into the if because on the chance you have a wildCard AND uno, the check win message will clear out the message for user to choose what to change the wild card to
     } 
     showCards(); //call showCards function to swap who is allowed to play
-    checkWin();
+    
 }
 
 //FUNCTION THAT CHECKS FOR A WIN
@@ -452,8 +457,8 @@ const playGame= ()=> {
         putMessage.append(message);
     }, 1000);
     setTimeout(()=> {
-        message.innerText= 'Here are the rules:';
-        message.style.fontSize= '15x';
+        message.innerText= 'If you want to read the rules, click below.';
+        message.style.fontSize= '30x';
         putMessage.append(message);
         sayRules();
     }, 3000);
@@ -462,15 +467,15 @@ const playGame= ()=> {
         message.innerText= 'Let the best player win...';
         message.style.fontSize= '30px';
         putMessage.append(message);
-    }, 10000);
+    }, 4000);
 
-    setTimeout(cardMaker, 12000);
+    setTimeout(cardMaker, 5000);
     //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
-    setTimeout(dealCards, 14000); //instead of using setTimeout do an event listener for clicker, of deal cards button
+    setTimeout(dealCards, 6000); //instead of using setTimeout do an event listener for clicker, of deal cards button
     //dealCards();
     //showCards();
-    setTimeout(startCard, 17000);
-    setTimeout(showCards, 18000);
+    setTimeout(startCard, 7000);
+    setTimeout(showCards, 8000);
     
 }
 
