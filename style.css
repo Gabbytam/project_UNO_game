@@ -57,7 +57,7 @@ body {
 }
 
 .card {
-    position: absolute; /*allows all the cards to be stacked on top of each other*/
+    /*position: absolute; /*allows all the cards to be stacked on top of each other*/
     text-align: center;
 }
 

@@ -1,7 +1,7 @@
 console.log('(u-no) what it isssss');
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'reverse', '+2'];
+const cardValue= [0, 1, 2, 3,/* 4, 5, 6, 7, 8, 9, 'skip',*/ 'reverse', '+2'];
 const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let usedCards= [];
@@ -170,7 +170,6 @@ const dealCards= ()=> {
 
 //FUNCTION THAT WILL PUT TOP CARD DOWN
 const startCard= ()=> {
-    //we're using drawPile to make the code make more sense, but we could also just use newDeck.shuffledCards because that value updates as it continues through code(I think)
     //rule is that if top card is one of the wild cards, draw another card as the start card 
     if(drawPile[0].type.includes('Wild')){ //checks the type of the first card in the drawPile to see if it includes the string, Wild, and if so:
         console.log('That cant be your start card...sorry');
@@ -180,21 +179,16 @@ const startCard= ()=> {
         drawPile.shift(); //second, remove it from the beginning of the drawPile array
         arrayOfAllCards.shift(); //mirror with card element 
         //!!!PROBLEM: if two black cards are in a row it wont get rid of it, maybe call function within itself 
-        topCard=drawPile[0]; //third, set the top card to the NEW first card in the drawPile array
-        topCardElement=arrayOfAllCards[0]; //mirror with card element
-        usedCards.push(topCard);
-        arrayOfUsedCards.push(topCardElement);
+        startCard(); //run through this again for the case that there are several wild cards in a row
     } else { //for any card that isnt type 'Wild'
         topCard=drawPile[0]; //top card is equal to first card in array
         topCardElement=arrayOfAllCards[0]; //mirror with card element 
         drawPile.shift(); //make sure to remove that card from the drawPile
         arrayOfAllCards.shift(); //mirror with card element 
-        usedCards.push(topCard);
-        arrayOfUsedCards.push(topCardElement);
+        usedCards.push(topCard); //adding topCard and topCardElement to arrays, needed for the reshuffle function 
+        arrayOfUsedCards.push(topCardElement); 
     }
-    console.log('this is the starting/top card', topCard); 
-    console.log('this is top card element', topCardElement);
-    usedCardSpot.append(topCardElement);
+    usedCardSpot.append(topCardElement); //move the card element
 }
 
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
@@ -471,11 +465,11 @@ const playGame= ()=> {
 
     setTimeout(cardMaker, 5000);
     //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
-    setTimeout(dealCards, 6000); //instead of using setTimeout do an event listener for clicker, of deal cards button
+    setTimeout(dealCards, 8000); //instead of using setTimeout do an event listener for clicker, of deal cards button
     //dealCards();
     //showCards();
-    setTimeout(startCard, 7000);
-    setTimeout(showCards, 8000);
+    setTimeout(startCard, 11000);
+    setTimeout(showCards, 13000);
     
 }
 
