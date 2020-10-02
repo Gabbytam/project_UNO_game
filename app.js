@@ -1,7 +1,7 @@
 console.log('(u-no) what it isssss');
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3,/* 4, 5, 6, 7, 8, 9, 'skip',*/ 'reverse', '+2'];
+const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'reverse', '+2'];
 const specialCardValue= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let usedCards= [];
@@ -34,14 +34,14 @@ class Factory {
         this.shuffledCards= [];
     }
     makeDeck(){
-        //for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
+        for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
             for(let i= 0; i<cardType.length; i++){ //loops through the different color cards 
                 for(let j= 0; j<cardValue.length; j++){ //loops through different available values for each color, because its a nested loop
                     let card= new Card(cardType[i], cardValue[j]); //creating a new card object that calls on our Card class, passing in the current cardType for the type and the cardValue for the value
                     this.deckOfCards.push(card); //adds this newly made object into our deckOfCards array 
                 }
             }
-        //}   
+        }   
         for(let f=0; f<4; f++){ //need to make 4 of each of these cards
             let card= new Card(specialCardValue[0], -1); //creates card using Card class passing in a specified type and value
             this.deckOfCards.push(card); //push that before moving on
@@ -49,7 +49,6 @@ class Factory {
             this.deckOfCards.push(card);
 
         }
-        //console.log(this.deckOfCards); //able to see our deckOfCards
     }
     shuffleDeck(deck){ //when shuffleDeck is called, our deckOfCards array is passed in. This function changes the value of deck of cards for some reason idk, cant figure it out. womp womp
         for(let i=0; i<deck.length; i++){ //loops through entire deckOfCards array
@@ -185,8 +184,7 @@ const reshuffleDeck= ()=> {
         console.log('THERE ARE NO MORE CARDS IN THE DECK');
         usedCards.splice(usedCards.length-1, 1); //take out the last card in the usedCard, which signifies the topCard
         arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
-
-        //grab the used cards and shuffle them
+        //grab the used cards and both of the used card arrays and shuffle them
         for(let i=0; i<usedCards.length; i++){ 
             let random= Math.floor(Math.random()* usedCards.length); 
             const cardInArr= usedCards[i]; 
@@ -196,16 +194,12 @@ const reshuffleDeck= ()=> {
             usedCards[random]=cardInArr;
             arrayOfUsedCards[random]= cardElemInArr;
         }
-        console.log('this is usedCards post shuffle', usedCards);
-        console.log('this is used card elements post shuffle', arrayOfUsedCards);
-        //update drawPile and arrayOfAllCards to equal the above values 
+        //update drawPile and arrayOfAllCards to now equal the cards from the used Card arrays
         drawPile=usedCards;
         arrayOfAllCards= arrayOfUsedCards;
-
+        //make all the wildCards class back to black
         for(let i=0; i<arrayOfAllCards.length; i++){
-            //make all the wildCards class back to black
             if(drawPile[i].type.includes('Wild')){
-                //remove second class 
                 for(let j=0; j<cardType.length; j++){ //find the color of the card (its class name) by iterating through cardType array and finding the match
                     if(arrayOfAllCards[i].classList[1]=== cardType[j]){
                         newColor= cardType[j]; //if it matches, set a variable to that color
@@ -337,14 +331,12 @@ const checkCard= ()=> {
             }
         }
     } else if(event.currentTarget.classList[1]=== topCardElement.classList[1]){ //classList at index 1 is the class equal to the type
-        console.log('card can be played');
         usedCardSpot.append(event.currentTarget);
         updateTopCard(); //do this before updating the array 
         updateArray();
         topCardElement= event.currentTarget; //change the topCardElement variable to equal the card that was picked
         arrayOfUsedCards.push(topCardElement); //update the arrayOfUsed cards to include the newest topCardElement 
     } else if(event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){
-        console.log('card CAN be played');
         usedCardSpot.append(event.currentTarget);
         updateTopCard(); 
         updateArray();
@@ -355,7 +347,7 @@ const checkCard= ()=> {
         message.style.fontSize= '20px';
         putMessage.append(message);
     }
-    //event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
+    event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
 }
 
 //FUNCTION THAT WILL CLEAR MESSAGE BOARD
@@ -435,17 +427,6 @@ const checkWin= ()=> {
 const playGame= ()=> {
     //make sure to use the classed and make a deck, then shuffle the deck. Currently that is being done in the call for it after the class is written but were going to want to move that down into the playGame function 
     //deal out cards 
-    const sayRules= ()=> {
-        let list= document.createElement('ul');
-        putMessage.append(list);
-        let rules= ['Each player starts with 7 cards', 'Playable cards are ones that are the same color or value', 'Wild Cards can be put down at any time', 'If you can not play any of the cards in your hand, draw a card until you can put one down' ,'Skip cards can be used to skip over the other players turn', 'Win the game by getting rid of all of your cards'];
-        for(let i= 0; i<rules.length; i++){
-            let li= document.createElement('li');
-            li.innerText= rules[i];
-            li.style.fontSize= '10px';
-            list.append(li);
-        }
-    }
 
     setTimeout(()=> {
         message.innerText= 'Welcome to UNO';
@@ -456,15 +437,7 @@ const playGame= ()=> {
         message.innerText= 'If you want to read the rules, click below.';
         message.style.fontSize= '30x';
         putMessage.append(message);
-        sayRules();
     }, 3000);
-    setTimeout(()=> {
-        clearMessage();
-        message.innerText= 'Let the best player win...';
-        message.style.fontSize= '30px';
-        putMessage.append(message);
-    }, 4000);
-
     setTimeout(cardMaker, 5000);
     //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
     setTimeout(dealCards, 8000); //instead of using setTimeout do an event listener for clicker, of deal cards button
@@ -477,10 +450,35 @@ const playGame= ()=> {
 
 playGame(); //invoke playGame function, here just for trial and error 
 
+const showRules= ()=> {
+    clearMessage();
+    let list= document.createElement('ul');
+    putMessage.append(list);
+    let rules= ['Each player starts with 7 cards', 'Select a card by clicking on it','Playable cards are of the same type or value', 'Wild Cards can be put down at any time', 'If you can not play any of the cards in your hand, draw a card until you can put one down' ,'Skip cards can be used to skip over the other player\'s turn', 'Win the game by getting rid of all of your cards'];
+    for(let i= 0; i<rules.length; i++){
+        let li= document.createElement('li');
+        li.innerText= rules[i];
+        li.style.fontSize= '10px';
+        list.append(li);
+    }
+    let exit= document.createElement('button');
+    exit.innerText= 'Exit';
+    exit.id= 'exit';
+    exit.addEventListener('click', exitMessage);
+    putButtons.append(exit);
+
+    function exitMessage() {
+        clearMessage();
+        putButtons.removeChild(document.querySelector('#exit'));
+
+    }
+}
+
 document.addEventListener('DOMContentLoaded', ()=> {
     //first show rules of game then ask if they want to play
         //if yes, run play game function    
     button.addEventListener('click', drawCard);
+    rules.addEventListener('click', showRules);
 })
 
 

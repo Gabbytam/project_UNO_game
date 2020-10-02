@@ -21,7 +21,7 @@ body {
 
 #outter-container {
     width: 1200px;
-    height: 400px;
+    height: 370px;
     background: rgba(255, 255, 255, 0.438);
     display: flex;
     justify-content: space-around;
@@ -29,9 +29,9 @@ body {
 
 }
 
-.box4Player {
+.box4Player, .box4PlayCards {
     width: 250px;
-    height: 400px;
+    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -42,7 +42,7 @@ body {
 #container {
     display: flex;
     width: 700px;
-    height: 400px;
+    height: 100%;
     background: rgba(0, 0, 0, 0.267);
     justify-content: center; /*puts items in container in the center horizontally*/
     align-items: center; /*puts items in container in the center vertically*/
@@ -56,18 +56,13 @@ body {
     margin:0 20px 0 20px;
 }
 
-.card {
-    /*position: absolute; /*allows all the cards to be stacked on top of each other*/
-    text-align: center;
-}
-
-#spotOne, #spotTwo {
-
+#usedCardSpot, #spotOne, #spotTwo{
+    margin-bottom: 2.7em;
 }
 
 #viewCard {
     background: rgba(255, 19, 19, 0.452);
-    width: 100%;
+    width: 75%;
     height: 210px;
     display: flex;
     flex-direction: row; /* this gets the cards to appear side by side in the viewCard div*/
@@ -82,6 +77,7 @@ body {
     justify-content: center;
     align-items: center;
     border: 5px dotted white;
+    margin-top: 10px;
 }
 #messageBox{
     width: 600px;
@@ -91,6 +87,15 @@ body {
     flex-direction: column;
     justify-content: center;
     border: 5px dotted white;
+    font-family: 'Fascinate', cursive;
+}
+
+#putButtons {
+    width: 600px;
+    height: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #putMessage, #putSquare {
@@ -105,7 +110,7 @@ body {
 
 #messageHead {
     margin-top: 0px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     font-size: 30px;
 }
 
@@ -117,11 +122,14 @@ body {
 }
 
 .card {
-    /* border: 1px solid black; */
+    /* border: 1px solid black;  */
     margin: 0 auto;
     font-size: 10px; 
     display: flex;
     justify-content: space-between; /*this styling is for the cards when theyre in the viewCard section*/
+    position: absolute; /*allows all the cards to be stacked on top of each other*/
+    text-align: center;
+    font-family: 'Fascinate', cursive;
 }
 
 #whosCards {
@@ -148,4 +156,29 @@ body {
 .black {
     background: black;
     color: white;
+}
+
+li {
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+    text-align: left;
+}
+
+#button, #rules, #hint, #exit {
+    display:inline-block;
+    padding:0.5em 3em;
+    border:5px solid #0000003f;
+    margin:0 0.3em 0.3em 0;
+    box-sizing: border-box;
+    text-transform:uppercase;
+    font-family: 'Fascinate', cursive;
+    color:#000000;
+    text-align:center;
+}
+
+#button {
+    margin-top: 1em;
+}
+
+ul {
+    margin: .3em;
 }

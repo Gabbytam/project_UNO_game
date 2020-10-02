@@ -6,6 +6,7 @@
     <title>UNO</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Fascinate+Inline&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fascinate&display=swap" rel="stylesheet">
 </head>
 <body>
     <h1 id="title">Uno</h1>
@@ -17,9 +18,15 @@
         </div>
 
         <div id="container"> 
-            <div id="usedCardSpot">Used Cards</div>
-            <div id="deckSpot">Deck</div> 
-            <button id="button">DRAW CARD</button>
+            <div class="box4PlayCards">
+                <h3>Used Cards</h3>
+                <div id="usedCardSpot"></div>
+            </div>
+            <div class="box4PlayCards">
+                <h3>Deck</h3>
+                <div id="deckSpot"></div> 
+                <button id="button">DRAW CARD</button>
+            </div>
         </div>
 
         <div class="box4Player">
@@ -29,7 +36,7 @@
 
     </div>
     
-    <div id='whosCards'>Tell em whos cards</div>
+    <div id='whosCards'>Whose Cards</div>
     <div id="viewCard">
         <div id="playersCards"></div>
     </div>
@@ -38,6 +45,10 @@
         <div id="messageBox">
             <div id="putMessage"></div>
             <div id="putSquare"></div>
+        </div>
+        <div id="putButtons">
+            <button id="rules">Rules</button>
+            <button id="hint">Hint</button>
         </div>
     </div>
     <script src="app.js"></script>

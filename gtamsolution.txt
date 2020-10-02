@@ -1,0 +1,2 @@
+[master fbd8eb1] the reshuffled function now reshuffles the cards too
+ 1 file changed, 11 insertions(+), 9 deletions(-)
