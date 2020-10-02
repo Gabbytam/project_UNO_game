@@ -32,16 +32,17 @@ class Factory {
     constructor() {
         this.deckOfCards= [];
         this.shuffledCards= [];
+        this.reshuffleCards= [];
     }
     makeDeck(){
-        for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
+        //for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
             for(let i= 0; i<cardType.length; i++){ //loops through the different color cards 
                 for(let j= 0; j<cardValue.length; j++){ //loops through different available values for each color, because its a nested loop
                     let card= new Card(cardType[i], cardValue[j]); //creating a new card object that calls on our Card class, passing in the current cardType for the type and the cardValue for the value
                     this.deckOfCards.push(card); //adds this newly made object into our deckOfCards array 
                 }
             }
-        }   
+        //}   
         for(let f=0; f<4; f++){ //need to make 4 of each of these cards
             let card= new Card(specialCardValue[0], -1); //creates card using Card class passing in a specified type and value
             this.deckOfCards.push(card); //push that before moving on
@@ -60,20 +61,19 @@ class Factory {
         }
         this.shuffledCards= deck; //put shuffled deck equal to the shuffledCards array, even though it changes the original deckOfCards array 
     }
-    // addCard(card){
-    //     this.deckOfCards.push(card);
-    // }
+    takeDeck(card){
+         console.log('this is where we will send the cards')
+         //this.deckOfCards.push(card);
+    }
 }
 
 //HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS to make the deck of cards and shuffle them 
 const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
 newDeck.makeDeck(); //call the makeDeck function on deck
-// const allCards= newDeck.deckOfCards;
-// console.log('this is all cards', allCards);
+ const allCards= newDeck.deckOfCards;
 newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
-console.log(newDeck); //now we see that deck contains a filled deckOfCards array
+console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
 //const newUsedCards= new Factory();
-
 
 //FUNCTION THAT CREATES VISABLE CARDS
 const cardMaker= ()=> {
@@ -103,7 +103,6 @@ const cardMaker= ()=> {
         arrayOfAllCards.push(seeCard); //adds all the newly created cards into an array so they can be accessed by other functions 
     } 
 }
-//console.log('heres the array', arrayOfAllCards); //test
 
 //FUNCTION THAT WILL MOVE PLAYER CARDS TO THEIR RESPECTIVE HOLDING CELLS
 const moveCards= ()=> {
@@ -162,17 +161,12 @@ const dealCards= ()=> {
     newDeck.shuffledCards.splice(0, 14); //remove the cards from shuffledCards array AFTER the for loop is running so it doesnt mess with the count of the for loop
     arrayOfAllCards.splice(0, 14); //also have to remove from the array of html elements 
     drawPile= newDeck.shuffledCards; //set drawPile equal to the current state of shuffledCards (the shuffled cards minus the cards that were dealt out) 
-    console.log('cards for player 1', player1Cards);
-    console.log('cards for player 2', player2Cards);
-    //console.log('this is the remaining deck', newDeck.shuffledCards); //same as below
-    //console.log('this is the drawPile', drawPile); //same as above
 }
 
 //FUNCTION THAT WILL PUT TOP CARD DOWN
 const startCard= ()=> {
     //rule is that if top card is one of the wild cards, draw another card as the start card 
     if(drawPile[0].type.includes('Wild')){ //checks the type of the first card in the drawPile to see if it includes the string, Wild, and if so:
-        console.log('That cant be your start card...sorry');
         drawPile.push(drawPile[0]); //first, move that card to the end of the array so it can be used later
         arrayOfAllCards.push(arrayOfAllCards[0]); //mirror with card element 
         deckSpot.append(arrayOfAllCards[0]); //have to add extra step for card visual so that the card element moves from top to bottom of deck
@@ -189,6 +183,43 @@ const startCard= ()=> {
         arrayOfUsedCards.push(topCardElement); 
     }
     usedCardSpot.append(topCardElement); //move the card element
+}
+
+//FUNCTION THAT WILL RESTOCK THE DECK PILE 
+//to be checked before each draw from the deck 
+const reshuffleDeck= ()=> {
+    if(drawPile.length=== 0){//check if the drawPile has no more cards 
+        console.log('THERE ARE NO MORE CARDS IN THE DECK');
+        usedCards.splice(usedCards.length-1, 1); //take out the last card in the usedCard, which signifies the topCard
+        arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
+
+        //grab the used cards and shuffle them
+        newDeck.shuffleDeck(usedCards, arrayOfUsedCards);
+        console.log(newDeck);
+        //update drawPile and arrayOfAllCards to equal the above values 
+        drawPile=usedCards;
+        arrayOfAllCards= arrayOfUsedCards;
+
+        for(let i=0; i<arrayOfAllCards.length; i++){
+            //make all the wildCards class back to black
+            if(drawPile[i].type.includes('Wild')){
+                //remove second class 
+                for(let j=0; j<cardType.length; j++){ //find the color of the card (its class name) by iterating through cardType array and finding the match
+                    if(arrayOfAllCards[i].classList[1]=== cardType[j]){
+                        newColor= cardType[j]; //if it matches, set a variable to that color
+                    }
+                }
+                arrayOfAllCards[i].classList.remove(`${newColor}`); //pass in that variable to remove it from that card
+                arrayOfAllCards[i].classList.add('black'); //and set it back to black
+            }
+            deckSpot.append(arrayOfAllCards[i]); //after all that, append it
+        }
+        //reset usedCards and arrayOfUsedCards to only have top card in them
+        usedCards= [];
+        arrayOfUsedCards= [];
+        usedCards.push(topCard);
+        arrayOfUsedCards.push(topCardElement);
+    }
 }
 
 //FUNCTION THAT REMOVES CARD(S) FROM DRAW PILE
@@ -210,37 +241,6 @@ const addCard= ()=> {
         removeCard();
     }
     reshuffleDeck(); //run this function that checks if deck is empty
-}
-
-//FUNCTION THAT WILL RESTOCK THE DECK PILE 
-//to be checked before each draw from the deck 
-const reshuffleDeck= ()=> {
-    if(drawPile.length=== 0){//check if the drawPile has no more cards 
-        console.log('THERE ARE NO MORE CARDS IN THE DECK');
-        usedCards.splice(usedCards.length-1, 1); //take out the last card in the usedCard, which signifies the topCard
-        arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
-
-        //grab the used cards and shuffle them
-
-        //update drawPile and arrayOfAllCards to equal the above values 
-        drawPile=usedCards;
-        arrayOfAllCards= arrayOfUsedCards;
-
-        for(let i=0; i<arrayOfAllCards.length; i++){
-            //make all the wildCards class back to black
-            if(drawPile[i].type.includes('Wild')){
-                //remove second class 
-                for(let j=0; j<cardType.length; j++){ //find the color of the card (its class name) by iterating through cardType array and finding the match
-                    if(arrayOfAllCards[i].classList[1]=== cardType[j]){
-                        newColor= cardType[j]; //if it matches, set a variable to that color
-                    }
-                }
-                arrayOfAllCards[i].classList.remove(`${newColor}`); //pass in that variable to remove it from that card
-                arrayOfAllCards[i].classList.add('black'); //and set it back to black
-            }
-            deckSpot.append(arrayOfAllCards[i]); //after all that, append it
-        }
-    }
 }
 
 //FUNCTION THAT ALLOWS PLAYER TO DRAW CARD
@@ -353,7 +353,7 @@ const checkCard= ()=> {
         message.style.fontSize= '20px';
         putMessage.append(message);
     }
-    event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
+    //event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
 }
 
 //FUNCTION THAT WILL CLEAR MESSAGE BOARD
