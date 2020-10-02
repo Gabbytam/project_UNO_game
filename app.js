@@ -179,6 +179,7 @@ const startCard= ()=> {
         deckSpot.append(arrayOfAllCards[0]); //have to add extra step for card visual so that the card element moves from top to bottom of deck
         drawPile.shift(); //second, remove it from the beginning of the drawPile array
         arrayOfAllCards.shift(); //mirror with card element 
+        //!!!PROBLEM: if two black cards are in a row it wont get rid of it, maybe call function within itself 
         topCard=drawPile[0]; //third, set the top card to the NEW first card in the drawPile array
         topCardElement=arrayOfAllCards[0]; //mirror with card element
         usedCards.push(topCard);
@@ -260,13 +261,16 @@ const drawCard= ()=> {
         arrayForPlayer2.push(arrayOfAllCards[0]);
         removeCard();
     }
+    clearMessage(); //want to clear the message if player draws a card because the message is no longer relevant 
     showCards(); //have to update your cards to show the newly added card 
     reshuffleDeck(); //call reshuffledeck function after a card is drawn 
 }
 
+
+
+
 //FUNCTION THAT CHECKS TO SEE IF CARD CAN BE PLAYED
 const checkCard= ()=> {
-    //console.log(event.currentTarget); //can access event target from this function, which is not the function attached to the event listener 
     
     //NESTED FUNCTION THAT WILL UPDATE THE TWO CARD ARRAYS WHEN A MOVE IS MADE FOR A SPECIFIED PLAYER
     function updateArray(){ 
@@ -298,8 +302,8 @@ const checkCard= ()=> {
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
         let wildCard= event.currentTarget;
-        //let message= document.createElement('p');
         message.innerText= 'Please select the square of the color you would like to switch to.';
+        message.style.fontSize= '20px';
         putMessage.append(message);
         //create clickable div boxes
         for(let c=0; c<cardType.length; c++){
@@ -311,15 +315,12 @@ const checkCard= ()=> {
         }
         function changeWildCard(e) {
             //code that switches up the classes 
-            console.log('color of the chosen square', e.target.classList[1]);
             let colorChange= e.target.classList[1];
-            //checkCard();
             wildCard.classList.remove('black'); //gets rid of the class of 'black'
             wildCard.classList.add(colorChange);
             usedCardSpot.append(wildCard);
-            // topCardElement= wildCard;
-            // console.log('this is topCardElement', topCardElement);
-            // arrayOfUsedCards.push(topCardElement);
+            topCardElement= wildCard;
+            arrayOfUsedCards.push(topCardElement);
         }
 
         //!!!!!!HELP: want this code only to run after a color is clicked, how
@@ -328,9 +329,8 @@ const checkCard= ()=> {
         //usedCardSpot.append(event.currentTarget);
         updateTopCard();
         updateArray();
-        topCardElement= event.currentTarget;
-        console.log('this is topCardElement', topCardElement);
-        arrayOfUsedCards.push(topCardElement);
+        //topCardElement= event.currentTarget;
+        //arrayOfUsedCards.push(topCardElement);
         //within the condition for wild card, check if its a +4 and if so, run the drawCard function 4 times 
         if(event.currentTarget.getAttribute('value')=== '+4'){
             for(let i=0; i<4; i++){
@@ -353,23 +353,28 @@ const checkCard= ()=> {
         arrayOfUsedCards.push(topCardElement);
     } else {
         message.innerText= 'That card cannot be played, try another card or draw a card';
+        message.style.fontSize= '20px';
         putMessage.append(message);
     }
-    //event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
+    event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
 }
 
-//FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
-const makeAMove=(event)=> {
-    //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
-    //at the beginning of each move, check if there's a message, if so, remove it
+//FUNCTION THAT WILL CLEAR MESSAGE BOARD
+const clearMessage= ()=> {
     while(putMessage.firstChild){
         putMessage.removeChild(putMessage.firstChild);
     }
     while(putSquare.firstChild){
         putSquare.removeChild(putSquare.firstChild);
     }
+}
+//FUNCTION THAT WILL RUN IF CARD IN VIEW CARD IS CLICKED 
+const makeAMove=(event)=> {
+    //console.log('current', event.currentTarget); //target only only grabs the header IN the div, we can use currentTarget to access the card div. could also use  event.path[1]
+    //at the beginning of each move, check if there's a message, if so, remove it
+    clearMessage();
     checkCard();//call the checkCard function for play conditions
-    if(arrayOfUsedCards[arrayOfUsedCards.length-1]=== event.currentTarget){ //checks if a card has been placed down/played before adding 2 and switching players
+    if(arrayOfUsedCards[arrayOfUsedCards.length-1]=== event.currentTarget){ //checks if a card has been placed down/played before switching players and adding 2. 
         //if the card was played, do a separate check of the clicked card to see if it was a +2, and if so, run the addCard function twice 
         if(event.currentTarget.getAttribute('value')=== '+2'){
             for(let i=0; i<2; i++){
@@ -379,14 +384,18 @@ const makeAMove=(event)=> {
         if(event.currentTarget.getAttribute('value')=== 'skip'){ //before switching whos turn it is, check to see if a skip card was used, if so, player stays the same
             if(whosTurn==='player1'){
                 whosTurn= 'player1';
+                clearMessage();
             } else if(whosTurn=== 'player2'){
                 whosTurn= 'player2';
+                clearMessage();
             }
         } else { //if not, then switch player turns 
             if(whosTurn==='player1'){
                 whosTurn= 'player2';
+                clearMessage();
             } else if(whosTurn=== 'player2'){
                 whosTurn= 'player1';
+                clearMessage();
             }
         }
     } 
@@ -398,16 +407,24 @@ const makeAMove=(event)=> {
 //called for every move that is made 
 const checkWin= ()=> {
     if(player1Cards.length=== 1){
+        clearMessage();
         message.innerText= 'Player 1: UNO';
+        message.style.fontSize= '35px';
         putMessage.append(message);
     } else if(player2Cards.length=== 1){
+        clearMessage();
         message.innerText= 'Player 2: UNO';
+        message.style.fontSize= '35px';
         putMessage.append(message);
     } else if(player1Cards.length=== 0){
+        clearMessage();
         message.innerText= 'Player 1 has won the game!';
+        message.style.fontSize= '35px';
         putMessage.append(message);
     } else if(player2Cards.length=== 0){
+        clearMessage();
         message.innerText= 'Player 2 has won the game!';
+        message.style.fontSize= '35px';
         putMessage.append(message);
     }
 }
@@ -417,13 +434,44 @@ const checkWin= ()=> {
 const playGame= ()=> {
     //make sure to use the classed and make a deck, then shuffle the deck. Currently that is being done in the call for it after the class is written but were going to want to move that down into the playGame function 
     //deal out cards 
-    cardMaker();
+    const sayRules= ()=> {
+        let list= document.createElement('ul');
+        putMessage.append(list);
+        let rules= ['Each player starts with 7 cards', 'Playable cards are ones that are the same color or value', 'Wild Cards can be put down at any time', 'If you can not play any of the cards in your hand, draw a card until you can put one down' ,'Skip cards can be used to skip over the other players turn', 'Win the game by getting rid of all of your cards'];
+        for(let i= 0; i<rules.length; i++){
+            let li= document.createElement('li');
+            li.innerText= rules[i];
+            li.style.fontSize= '10px';
+            list.append(li);
+        }
+    }
+
+    setTimeout(()=> {
+        message.innerText= 'Welcome to UNO';
+        message.style.fontSize= '30px';
+        putMessage.append(message);
+    }, 1000);
+    setTimeout(()=> {
+        message.innerText= 'Here are the rules:';
+        message.style.fontSize= '15x';
+        putMessage.append(message);
+        sayRules();
+    }, 3000);
+    setTimeout(()=> {
+        clearMessage();
+        message.innerText= 'Let the best player win...';
+        message.style.fontSize= '30px';
+        putMessage.append(message);
+    }, 10000);
+
+    setTimeout(cardMaker, 12000);
     //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
-    setTimeout(dealCards, 3000); //instead of using setTimeout do an event listener for clicker, of deal cards button
+    setTimeout(dealCards, 14000); //instead of using setTimeout do an event listener for clicker, of deal cards button
     //dealCards();
-    setTimeout(showCards, 6000);
     //showCards();
-    setTimeout(startCard, 7000);
+    setTimeout(startCard, 17000);
+    setTimeout(showCards, 18000);
+    
 }
 
 playGame(); //invoke playGame function, here just for trial and error 

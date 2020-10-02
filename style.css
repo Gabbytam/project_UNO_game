@@ -81,6 +81,7 @@ body {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    border: 5px dotted white;
 }
 #messageBox{
     width: 600px;
@@ -89,6 +90,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: center;
+    border: 5px dotted white;
 }
 
 #putMessage, #putSquare {
@@ -115,6 +117,7 @@ body {
 }
 
 .card {
+    /* border: 1px solid black; */
     margin: 0 auto;
     font-size: 10px; 
     display: flex;
