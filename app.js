@@ -32,7 +32,6 @@ class Factory {
     constructor() {
         this.deckOfCards= [];
         this.shuffledCards= [];
-        this.reshuffleCards= [];
     }
     makeDeck(){
         //for(let k= 0; k<2; k++){ //makes it so there can be 2 of each card
@@ -61,19 +60,13 @@ class Factory {
         }
         this.shuffledCards= deck; //put shuffled deck equal to the shuffledCards array, even though it changes the original deckOfCards array 
     }
-    takeDeck(card){
-         console.log('this is where we will send the cards')
-         //this.deckOfCards.push(card);
-    }
 }
 
 //HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS to make the deck of cards and shuffle them 
 const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
 newDeck.makeDeck(); //call the makeDeck function on deck
- const allCards= newDeck.deckOfCards;
 newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
 console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
-//const newUsedCards= new Factory();
 
 //FUNCTION THAT CREATES VISABLE CARDS
 const cardMaker= ()=> {
@@ -194,8 +187,17 @@ const reshuffleDeck= ()=> {
         arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
 
         //grab the used cards and shuffle them
-        newDeck.shuffleDeck(usedCards, arrayOfUsedCards);
-        console.log(newDeck);
+        for(let i=0; i<usedCards.length; i++){ 
+            let random= Math.floor(Math.random()* usedCards.length); 
+            const cardInArr= usedCards[i]; 
+            const cardElemInArr= arrayOfUsedCards[i];
+            usedCards[i]= usedCards[random]; 
+            arrayOfUsedCards[i]= arrayOfUsedCards[random];
+            usedCards[random]=cardInArr;
+            arrayOfUsedCards[random]= cardElemInArr;
+        }
+        console.log('this is usedCards post shuffle', usedCards);
+        console.log('this is used card elements post shuffle', arrayOfUsedCards);
         //update drawPile and arrayOfAllCards to equal the above values 
         drawPile=usedCards;
         arrayOfAllCards= arrayOfUsedCards;
