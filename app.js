@@ -2,7 +2,7 @@ console.log('(u-no) what it isssss');
 let newDeck; //make this a global variable before setting it to a new instance of a class
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3/*, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'*/];
+const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'];
 const specialCardType= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let usedCards= [];
@@ -10,8 +10,8 @@ let whosTurn= 'player1';
 let topCard;
 let topCardElement;
 //initialize empty arrays for the player's cards 
-let player1Cards= []; //this used to see in console 
-let player2Cards=[]; //this used to see in console
+let player1Cards= []; 
+let player2Cards=[]; 
 //arrays for the visual cards, will be attached to div elements 
 let arrayOfAllCards= []; 
 let arrayForPlayer1= [];
@@ -20,8 +20,9 @@ let arrayOfUsedCards=[];
 //create a p element message that can be changed depending on the case
 let message= document.createElement('p');
 let gameWon= false;
+let player1Points= 0;
+let player2Points= 0;
 
-//MIGHT BE BETTER TO USE CLASS SO YOU CAN ACCESS TYPE AND VALUE 
 //first made a class Card that takes in 2 attributes, the type and value 
 class Card {
     constructor(type, value){
@@ -63,18 +64,11 @@ class Factory {
     }
 }
 
-//HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS to make the deck of cards and shuffle them 
-// const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
-// newDeck.makeDeck(); //call the makeDeck function on deck
-// newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
-// console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
-
 //FUNCTION THAT MAKES JS CARDS AND SHUFFLES THEM USING THE CLASSES
 const makeJSDeck=()=>{
-    newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
+    newDeck= new Factory(); //have to instantiate using Factory and set it to variable deck 
     newDeck.makeDeck(); //call the makeDeck function on deck
     newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
-    console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
 }
 
 //FUNCTION THAT CREATES VISABLE CARDS
@@ -97,7 +91,6 @@ const cardMaker= ()=> {
             seeCard.classList.add('black');
         }
         let cardInfo= document.createElement('h1'); //create an element that can add the text info 
-        //cardInfo.innerText= `Type: ${newDeck.shuffledCards[i].type} Value: ${newDeck.shuffledCards[i].value}`;
         //special styling and text assignment depending on card
         if(newDeck.shuffledCards[i].value=== -1){
             cardInfo.innerText= 'Wild Card';
@@ -195,7 +188,6 @@ const startCard= ()=> {
         deckSpot.append(arrayOfAllCards[0]); //have to add extra step for card visual so that the card element moves from top to bottom of deck
         drawPile.shift(); //second, remove it from the beginning of the drawPile array
         arrayOfAllCards.shift(); //mirror with card element 
-        //!!!PROBLEM: if two black cards are in a row it wont get rid of it, maybe call function within itself 
         startCard(); //run through this again for the case that there are several wild cards in a row
     } else { //for any card that isnt type 'Wild'
         topCard=drawPile[0]; //top card is equal to first card in array
@@ -208,12 +200,10 @@ const startCard= ()=> {
     usedCardSpot.append(topCardElement); //move the card element
 }
 
-//FUNCTION THAT WILL RESTOCK THE DECK PILE 
-//to be checked before each draw from the deck 
+//FUNCTION THAT WILL RESTOCK THE DECK PILE //to be checked before each draw from the deck 
 const reshuffleDeck= ()=> {
     if(drawPile.length=== 0
     || arrayOfAllCards=== 0){//check if the drawPile has no more cards 
-        console.log('THERE ARE NO MORE CARDS IN THE DECK');
         usedCards.splice(usedCards.length-1, 1); //take out the last card in the usedCard, which signifies the topCard
         arrayOfUsedCards.splice(arrayOfUsedCards.length-1,1); //take out the last card in the arrayOfUsedCards, which signifies the topCardElement 
         //grab the used cards and both of the used card arrays and shuffle them
@@ -271,8 +261,7 @@ const addCard= ()=> {
     reshuffleDeck(); //run this function that checks if deck is empty
 }
 
-//FUNCTION THAT ALLOWS PLAYER TO DRAW CARD
-//run this function if someone clicks on the drawPile, give drawPile an event listener OR have it automatically run
+//FUNCTION THAT ALLOWS PLAYER TO DRAW CARD //runs with click
 const drawCard= ()=> {
     if(whosTurn=== 'player1'){
         player1Cards.push(drawPile[0]);
@@ -287,9 +276,6 @@ const drawCard= ()=> {
     showCards(); //have to update your cards to show the newly added card 
     reshuffleDeck(); //call reshuffledeck function after a card is drawn 
 }
-
-
-
 
 //FUNCTION THAT CHECKS TO SEE IF CARD CAN BE PLAYED
 const checkCard= ()=> {
@@ -405,7 +391,6 @@ const makeAMove=(event)=> {
                 addCard();
             }
         }
-        
         if(event.currentTarget.getAttribute('value')=== 'skip'){ //before switching whos turn it is, check to see if a skip card was used, if so, player stays the same
             if(whosTurn==='player1'){
                 whosTurn= 'player1';
@@ -426,8 +411,7 @@ const makeAMove=(event)=> {
         checkWin(); //moved this function call up into the if because on the chance you have a wildCard AND uno, the check win message will clear out the message for user to choose what to change the wild card to
         playAgain();
     } 
-    showCards(); //call showCards function to swap who is allowed to play
-    
+    showCards(); //call showCards function to swap who is allowed to play  
 }
 
 //FUNCTION THAT CHECKS FOR A WIN, called for every move that is made 
@@ -444,9 +428,11 @@ const checkWin= ()=> {
         if(player1Cards.length=== 0){
             message.innerText= 'Player 1 has won the game!';
             gameWon= true;
+            player1Points++;
         } else if(player2Cards.length=== 0){
             message.innerText= 'Player 2 has won the game!';
             gameWon= true;
+            player2Points++;
         }
         message.style.fontSize= '35px';
         putMessage.append(message);
@@ -474,8 +460,7 @@ const playGame= ()=> {
     
 }
 
-
-//THE FUNCTION THAT IS RUN IF SOMEONE CLICKS THAT WANT TO PLAY AGAIN
+//THE FUNCTION THAT IS RUN IF SOMEONE CLICKS THAT THEY WANT TO PLAY AGAIN
 const resetGame=()=> { 
     //reset almost everything to empty arrays basically hehe
     topCard;
@@ -492,8 +477,20 @@ const resetGame=()=> {
     while(viewCard.firstChild){
         viewCard.removeChild(viewCard.firstChild);
     }
+    while(putWin.firstChild){
+        putWin.removeChild(putWin.firstChild);
+    }
+    //create elements to display win
+    putWin.style.display= 'flex';
+    let winHeader= document.createElement('h3');
+    winHeader.innerText= 'Player Points';
+    winHeader.id= 'winTitle';
+    putWin.append(winHeader);
+    let winTally= document.createElement('p');
+    winTally.innerText= `Player 1: ${player1Points} \nPlayer 2: ${player2Points}`;
+    putWin.append(winTally);
     gameWon= false; //before calling playGame, set gameWon back to false 
-    playGame();
+    playGame(); //recall playGame function
 }
 
 //FUNCTION THAT LETS USER DECIDE IF THEY WANT TO PLAY AGAIN 
@@ -503,7 +500,7 @@ const playAgain=()=> {
         let ask= document.createElement('p');
         ask.innerText= 'Would you like the play again?';
         putSquare.append(ask);
-
+        //create a button that allows user to click that they want to play again
         let againButton= document.createElement('button');
         againButton.id= 'playAgain';
         putButtons.append(againButton);
@@ -512,24 +509,26 @@ const playAgain=()=> {
     }
 }
 
+//FUNCTION THAT SHOWS THE GAME RULES IF RULES BUTTON IS CLICKED
 const showRules= ()=> {
     clearMessage();
     let list= document.createElement('ul');
     putMessage.append(list);
     let rules= ['Each player starts with 7 cards', 'Select a card by clicking on it','Playable cards are of the same type or value', 'Wild Cards can be put down at any time', 'If you can not play any of the cards in your hand, draw a card until you can put one down' ,'Skip cards can be used to skip over the other player\'s turn', 'Win the game by getting rid of all of your cards', 'Clicking the "hint" button will make the playable cards glow'];
-    for(let i= 0; i<rules.length; i++){
+    for(let i= 0; i<rules.length; i++){ //create list items for every rule
         let li= document.createElement('li');
         li.innerText= rules[i];
         li.style.fontSize= '10px';
         list.append(li);
     }
+    //create a button that gets rid of the rules 
     let exit= document.createElement('button');
     exit.innerText= 'Exit';
     exit.id= 'exit';
     exit.addEventListener('click', exitMessage);
     putButtons.append(exit);
 
-    function exitMessage() {
+    function exitMessage() { //the function that is run when exit button is clicked 
         clearMessage();
         putButtons.removeChild(document.querySelector('#exit'));
 
@@ -538,6 +537,7 @@ const showRules= ()=> {
 
 //FUNCTION THAT WILL GIVE HINT IF ASKED 
 const giveHint=()=> {
+    //depending on player, cards that are able to be played will glow 
     if(whosTurn=== 'player1'){
         for(let i=0; i<arrayForPlayer1.length; i++){
             if(arrayForPlayer1[i].classList[1]=== topCardElement.classList[1]
@@ -563,5 +563,3 @@ document.addEventListener('DOMContentLoaded', ()=> {
     rules.addEventListener('click', showRules);
     hint.addEventListener('click', giveHint);
 })
-
-
