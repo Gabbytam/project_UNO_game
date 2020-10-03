@@ -161,7 +161,7 @@ li {
     text-align: left;
 }
 
-#button, #rules, #hint, #exit {
+#button, #rules, #hint, #exit, #playAgain {
     display:inline-block;
     padding:0.5em 3em;
     border:5px solid #0000003f;

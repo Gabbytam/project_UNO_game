@@ -1,7 +1,8 @@
 console.log('(u-no) what it isssss');
+let newDeck; //make this a global variable before setting it to a new instance of a class
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'];
+const cardValue= [0, 1, 2, 3/*, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'*/];
 const specialCardType= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let usedCards= [];
@@ -63,10 +64,18 @@ class Factory {
 }
 
 //HERE IS WHERE WE USE/CALL OUR CLASSES AND CALL THEIR METHODS to make the deck of cards and shuffle them 
-const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
-newDeck.makeDeck(); //call the makeDeck function on deck
-newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
-console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
+// const newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
+// newDeck.makeDeck(); //call the makeDeck function on deck
+// newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
+// console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
+
+//FUNCTION THAT MAKES JS CARDS AND SHUFFLES THEM USING THE CLASSES
+const makeJSDeck=()=>{
+    newDeck= new Factory(); //have to instantiate(?) using Factory and set it to variable deck 
+    newDeck.makeDeck(); //call the makeDeck function on deck
+    newDeck.shuffleDeck(newDeck.deckOfCards);//call shuffleDeck method on 
+    console.log('heres the new deck', newDeck); //now we see that deck contains a filled deckOfCards array
+}
 
 //FUNCTION THAT CREATES VISABLE CARDS
 const cardMaker= ()=> {
@@ -347,6 +356,7 @@ const checkCard= ()=> {
             }
             showCards();
             checkWin();
+            playAgain();
         }
         updateTopCard(); //these two call functions have to be outside the changeWildCard function because the refer to the currentTarget which needs to be the card not the box. It also works just fine because the code reaches this section before the turn is switched (which occurs after user makes a choice)
         updateArray();
@@ -414,13 +424,13 @@ const makeAMove=(event)=> {
             }
         }
         checkWin(); //moved this function call up into the if because on the chance you have a wildCard AND uno, the check win message will clear out the message for user to choose what to change the wild card to
+        playAgain();
     } 
     showCards(); //call showCards function to swap who is allowed to play
     
 }
 
-//FUNCTION THAT CHECKS FOR A WIN
-//called for every move that is made 
+//FUNCTION THAT CHECKS FOR A WIN, called for every move that is made 
 const checkWin= ()=> {
     //put clearMessage() and other code after if/else if statements inside this if because we only want those things to happen if player gets uno or has won
     if(player1Cards.length<= 1
@@ -443,12 +453,9 @@ const checkWin= ()=> {
     } 
 }
 
-
 //FUNCTION THAT SERVES AS PLAYING THE GAME
 const playGame= ()=> {
-    //make sure to use the classed and make a deck, then shuffle the deck. Currently that is being done in the call for it after the class is written but were going to want to move that down into the playGame function 
-    //deal out cards 
-
+    makeJSDeck(); //get all the js cards made 
     setTimeout(()=> {
         message.innerText= 'Welcome to UNO';
         message.style.fontSize= '35px';
@@ -458,18 +465,52 @@ const playGame= ()=> {
         message.innerText= 'If you want to read the rules, click below.';
         message.style.fontSize= '30x';
         putMessage.append(message);
-    }, 3000);
-    setTimeout(cardMaker, 5000);
-    //CURRENTLY USING SETTIMEOUT JUST TO WATCH STEPS HAPPEN, WILL BE CHANGING THAT LATER
-    setTimeout(dealCards, 8000); //instead of using setTimeout do an event listener for clicker, of deal cards button
-    //dealCards();
-    //showCards();
+    }, 4000);
+    setTimeout(cardMaker, 6000);
+    setTimeout(dealCards, 9000); 
+ 
     setTimeout(startCard, 11000);
     setTimeout(showCards, 13000);
     
 }
 
-playGame(); //invoke playGame function, here just for trial and error 
+
+//THE FUNCTION THAT IS RUN IF SOMEONE CLICKS THAT WANT TO PLAY AGAIN
+const resetGame=()=> { 
+    //reset almost everything to empty arrays basically hehe
+    topCard;
+    topCardElement;
+    player1Cards= [];
+    player2Cards=[]; 
+    arrayForPlayer1= [];
+    arrayForPlayer2=[];
+    usedCards= [];
+    arrayOfAllCards= [];
+    arrayOfUsedCards=[];
+    clearMessage();
+    putButtons.removeChild(document.querySelector('#playAgain'));
+    while(viewCard.firstChild){
+        viewCard.removeChild(viewCard.firstChild);
+    }
+    gameWon= false; //before calling playGame, set gameWon back to false 
+    playGame();
+}
+
+//FUNCTION THAT LETS USER DECIDE IF THEY WANT TO PLAY AGAIN 
+const playAgain=()=> {
+    if(gameWon=== true){
+        //offer player to play again 
+        let ask= document.createElement('p');
+        ask.innerText= 'Would you like the play again?';
+        putSquare.append(ask);
+
+        let againButton= document.createElement('button');
+        againButton.id= 'playAgain';
+        putButtons.append(againButton);
+        againButton.innerText= 'Play Again';
+        againButton.addEventListener('click', resetGame);
+    }
+}
 
 const showRules= ()=> {
     clearMessage();
@@ -502,8 +543,6 @@ const giveHint=()=> {
             if(arrayForPlayer1[i].classList[1]=== topCardElement.classList[1]
             || arrayForPlayer1[i].getAttribute('value')=== topCardElement.getAttribute('value')
             || arrayForPlayer1[i].classList[1]==='black'){
-                //make it glow
-                console.log('This is a match', arrayForPlayer1[i]);
                 arrayForPlayer1[i].style.boxShadow= '10px 10px 10px 10px white';
             }
         }
@@ -512,16 +551,14 @@ const giveHint=()=> {
             if(arrayForPlayer2[i].classList[1]=== topCardElement.classList[1]
             || arrayForPlayer2[i].getAttribute('value')=== topCardElement.getAttribute('value')
             || arrayForPlayer2[i].classList[1]==='black'){
-                //make it glow
-                console.log('This is a match', arrayForPlayer2[i]);
                 arrayForPlayer2[i].style.boxShadow= '10px 10px 10px 10px white';
             }
         }
     }
 }
 
-
 document.addEventListener('DOMContentLoaded', ()=> { 
+    playGame(); //invoke function to start game
     button.addEventListener('click', drawCard);
     rules.addEventListener('click', showRules);
     hint.addEventListener('click', giveHint);
