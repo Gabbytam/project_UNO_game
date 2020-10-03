@@ -72,7 +72,6 @@ Personal techniques:
 
 ### Unsolved Problems
 * The biggest bug that I'm aware of that I couldn't, for the life of me, figure out is _sometimes_ the reshuffle function doesn't work. It always worked the first time, often on the 2nd and 3rd time around but in random cases my drawPile array would grab the top card at some point (could not track where) and then the arrayForAllCards would not be in line with the drawPile array, leading to further mishaps. 
-* Also couldn't figure out how to remove event listeners from the players cards when they choose a wild card and get prompted. Code expects user to click on a color but if they accidentally click on a different card at hand, the whole game gets off track. 
 * If you click the play again button twice on accident it will call playGame function twice and render double of everything 
 * Clicking on rules button twice will create multiple exit buttons 
     * Added those last minute, hopefully with more time I would be able to fix those bugs 
