@@ -116,11 +116,13 @@ const moveCards= ()=> {
         for(let i=0; i<arrayForPlayer2.length; i++){
             spotTwo.append(arrayForPlayer2[i]); //move cards to holding cell
             arrayForPlayer2[i].style.position= 'absolute'; //change positioning back so cards stack 
+            arrayForPlayer2[i].style.boxShadow= 'none'; //get rid of hint shadowing 
         }
     } else if(whosTurn=== 'player2'){ //and if it is player1 turn, player2 cards need to go to holding cell
         for(let i=0; i<arrayForPlayer1.length; i++){
             spotOne.append(arrayForPlayer1[i]);
             arrayForPlayer1[i].style.position= 'absolute';
+            arrayForPlayer1[i].style.boxShadow= 'none'; 
         }
     }
 }
@@ -331,6 +333,7 @@ const checkCard= ()=> {
             wildCard.classList.remove('black'); //gets rid of the class of 'black'
             wildCard.classList.add(colorChange);
             usedCardSpot.append(wildCard);
+            wildCard.style.boxShadow= 'none';
             wildCard.removeEventListener('click', makeAMove);
             topCardElement= wildCard; //assigning the topCard as the wildCard so it can be added to the arrayOfUsedCards
             arrayOfUsedCards.push(topCardElement); 
@@ -353,20 +356,15 @@ const checkCard= ()=> {
                 addCard();
             }
         }
-    } else if(event.currentTarget.classList[1]=== topCardElement.classList[1]){ //classList at index 1 is the class equal to the type
+    } else if(event.currentTarget.classList[1]=== topCardElement.classList[1]
+    || event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){ //checking if value or type matches //classList at index 1 is the class equal to the type.
         usedCardSpot.append(event.currentTarget);
+        event.currentTarget.style.boxShadow= 'none'; //if user chooses the card with the hint, remove the shadow style
         event.currentTarget.removeEventListener('click', makeAMove); //have to remove eventlistener so it cant be clicked from the usedCard pile and confuse the code 
         updateTopCard(); //do this before updating the array 
         updateArray();
         topCardElement= event.currentTarget; //change the topCardElement variable to equal the card that was picked
         arrayOfUsedCards.push(topCardElement); //update the arrayOfUsed cards to include the newest topCardElement 
-    } else if(event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){
-        usedCardSpot.append(event.currentTarget);
-        event.currentTarget.removeEventListener('click', makeAMove);
-        updateTopCard(); 
-        updateArray();
-        topCardElement= event.currentTarget;
-        arrayOfUsedCards.push(topCardElement);
     } else {
         message.innerText= 'That card cannot be played, try another card or draw a card';
         message.style.fontSize= '25px';
@@ -477,7 +475,7 @@ const showRules= ()=> {
     clearMessage();
     let list= document.createElement('ul');
     putMessage.append(list);
-    let rules= ['Each player starts with 7 cards', 'Select a card by clicking on it','Playable cards are of the same type or value', 'Wild Cards can be put down at any time', 'If you can not play any of the cards in your hand, draw a card until you can put one down' ,'Skip cards can be used to skip over the other player\'s turn', 'Win the game by getting rid of all of your cards'];
+    let rules= ['Each player starts with 7 cards', 'Select a card by clicking on it','Playable cards are of the same type or value', 'Wild Cards can be put down at any time', 'If you can not play any of the cards in your hand, draw a card until you can put one down' ,'Skip cards can be used to skip over the other player\'s turn', 'Win the game by getting rid of all of your cards', 'Clicking the "hint" button will make the playable cards glow'];
     for(let i= 0; i<rules.length; i++){
         let li= document.createElement('li');
         li.innerText= rules[i];
@@ -497,11 +495,36 @@ const showRules= ()=> {
     }
 }
 
-document.addEventListener('DOMContentLoaded', ()=> {
-    //first show rules of game then ask if they want to play
-        //if yes, run play game function    
+//FUNCTION THAT WILL GIVE HINT IF ASKED 
+const giveHint=()=> {
+    if(whosTurn=== 'player1'){
+        for(let i=0; i<arrayForPlayer1.length; i++){
+            if(arrayForPlayer1[i].classList[1]=== topCardElement.classList[1]
+            || arrayForPlayer1[i].getAttribute('value')=== topCardElement.getAttribute('value')
+            || arrayForPlayer1[i].classList[1]==='black'){
+                //make it glow
+                console.log('This is a match', arrayForPlayer1[i]);
+                arrayForPlayer1[i].style.boxShadow= '10px 10px 10px 10px white';
+            }
+        }
+    } else if(whosTurn=== 'player2'){
+        for(let i=0; i<arrayForPlayer2.length; i++){
+            if(arrayForPlayer2[i].classList[1]=== topCardElement.classList[1]
+            || arrayForPlayer2[i].getAttribute('value')=== topCardElement.getAttribute('value')
+            || arrayForPlayer2[i].classList[1]==='black'){
+                //make it glow
+                console.log('This is a match', arrayForPlayer2[i]);
+                arrayForPlayer2[i].style.boxShadow= '10px 10px 10px 10px white';
+            }
+        }
+    }
+}
+
+
+document.addEventListener('DOMContentLoaded', ()=> { 
     button.addEventListener('click', drawCard);
     rules.addEventListener('click', showRules);
+    hint.addEventListener('click', giveHint);
 })
 
 

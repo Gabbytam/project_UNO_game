@@ -70,7 +70,7 @@ body {
 
 #messageBoard {
     width: 680px;
-    height: 320px;
+    height: 340px;
     background: rgba(255, 255, 255, 0.651);
     display: flex;
     flex-direction: column;
@@ -81,7 +81,7 @@ body {
 }
 #messageBox{
     width: 600px;
-    height: 200px;
+    height: 220px;
     background: rgba(128, 255, 0, 0.527);
     display: flex;
     flex-direction: column;
