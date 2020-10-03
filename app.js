@@ -18,6 +18,7 @@ let arrayForPlayer2=[];
 let arrayOfUsedCards=[];
 //create a p element message that can be changed depending on the case
 let message= document.createElement('p');
+let gameWon= false;
 
 //MIGHT BE BETTER TO USE CLASS SO YOU CAN ACCESS TYPE AND VALUE 
 //first made a class Card that takes in 2 attributes, the type and value 
@@ -71,7 +72,6 @@ console.log('heres the new deck', newDeck); //now we see that deck contains a fi
 const cardMaker= ()=> {
     for(let i= 0; i<newDeck.shuffledCards.length; i++){ //loops through the array that is all the shuffled cards 
         let seeCard= document.createElement('div');
-        // seeCard.addEventListener('click', makeAMove);
         seeCard.id= i;
         seeCard.setAttribute('value', newDeck.shuffledCards[i].value); //give all visible cards a value attribute equal to the card value
         seeCard.classList.add('card'); //give a class to style
@@ -139,6 +139,9 @@ const showCards= ()=> {
         viewCard.append(arrayForPlayer1[i]); //accesses and adds singular array elements 
         arrayForPlayer1[i].style.position= 'static'; //we dont want the cards in the viewCard div to be stacked so we change the positioning 
         arrayForPlayer1[i].addEventListener('click', makeAMove); //put event listeners on the card when it is players turn and cards are shown 
+        if(gameWon=== true){ //remove the card event listener once game has been won, no more moves can be made
+            arrayForPlayer1[i].removeEventListener('click', makeAMove); 
+        } 
        }
     } else if(whosTurn=== 'player2'){ //everything is the same as above if statement but for the other player
         whosCards.innerText= `Player 2's Cards, ${arrayForPlayer2.length}`;
@@ -146,6 +149,9 @@ const showCards= ()=> {
             viewCard.append(arrayForPlayer2[i]);  
             arrayForPlayer2[i].style.position= 'static'; 
             arrayForPlayer2[i].addEventListener('click', makeAMove);
+            if(gameWon=== true){
+                arrayForPlayer2[i].removeEventListener('click', makeAMove);
+            }
         }
     }
 }
@@ -307,8 +313,9 @@ const checkCard= ()=> {
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
         let wildCard= event.currentTarget;
+        //event.currentTarget.removeEventListener('click', makeAMove); //remove event listener so it cant be clicked on.
         message.innerText= 'Please select the square of the color you would like to switch to.';
-        message.style.fontSize= '20px';
+        message.style.fontSize= '25px';
         putMessage.append(message);
         //create clickable div boxes
         for(let c=0; c<cardType.length; c++){
@@ -324,6 +331,7 @@ const checkCard= ()=> {
             wildCard.classList.remove('black'); //gets rid of the class of 'black'
             wildCard.classList.add(colorChange);
             usedCardSpot.append(wildCard);
+            wildCard.removeEventListener('click', makeAMove);
             topCardElement= wildCard; //assigning the topCard as the wildCard so it can be added to the arrayOfUsedCards
             arrayOfUsedCards.push(topCardElement); 
             //the following code is repeatative of the code within the makeMove function. We have to have it here as well tho because as we are waiting for a response from the user, the code in MakeMove runs through without waiting. 
@@ -347,19 +355,21 @@ const checkCard= ()=> {
         }
     } else if(event.currentTarget.classList[1]=== topCardElement.classList[1]){ //classList at index 1 is the class equal to the type
         usedCardSpot.append(event.currentTarget);
+        event.currentTarget.removeEventListener('click', makeAMove); //have to remove eventlistener so it cant be clicked from the usedCard pile and confuse the code 
         updateTopCard(); //do this before updating the array 
         updateArray();
         topCardElement= event.currentTarget; //change the topCardElement variable to equal the card that was picked
         arrayOfUsedCards.push(topCardElement); //update the arrayOfUsed cards to include the newest topCardElement 
     } else if(event.currentTarget.getAttribute('value')=== topCardElement.getAttribute('value')){
         usedCardSpot.append(event.currentTarget);
+        event.currentTarget.removeEventListener('click', makeAMove);
         updateTopCard(); 
         updateArray();
         topCardElement= event.currentTarget;
         arrayOfUsedCards.push(topCardElement);
     } else {
         message.innerText= 'That card cannot be played, try another card or draw a card';
-        message.style.fontSize= '20px';
+        message.style.fontSize= '25px';
         putMessage.append(message);
     }
     event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
@@ -414,27 +424,25 @@ const makeAMove=(event)=> {
 //FUNCTION THAT CHECKS FOR A WIN
 //called for every move that is made 
 const checkWin= ()=> {
-    if(player1Cards.length=== 1){
+    //put clearMessage() and other code after if/else if statements inside this if because we only want those things to happen if player gets uno or has won
+    if(player1Cards.length<= 1
+    || player2Cards.length<= 1){
         clearMessage();
-        message.innerText= 'Player 1: UNO';
+        if(player1Cards.length=== 1){
+            message.innerText= 'Player 1: UNO';
+        } else if(player2Cards.length=== 1){
+            message.innerText= 'Player 2: UNO';
+        } 
+        if(player1Cards.length=== 0){
+            message.innerText= 'Player 1 has won the game!';
+            gameWon= true;
+        } else if(player2Cards.length=== 0){
+            message.innerText= 'Player 2 has won the game!';
+            gameWon= true;
+        }
         message.style.fontSize= '35px';
         putMessage.append(message);
-    } else if(player2Cards.length=== 1){
-        clearMessage();
-        message.innerText= 'Player 2: UNO';
-        message.style.fontSize= '35px';
-        putMessage.append(message);
-    } else if(player1Cards.length=== 0){
-        clearMessage();
-        message.innerText= 'Player 1 has won the game!';
-        message.style.fontSize= '35px';
-        putMessage.append(message);
-    } else if(player2Cards.length=== 0){
-        clearMessage();
-        message.innerText= 'Player 2 has won the game!';
-        message.style.fontSize= '35px';
-        putMessage.append(message);
-    }
+    } 
 }
 
 
@@ -445,7 +453,7 @@ const playGame= ()=> {
 
     setTimeout(()=> {
         message.innerText= 'Welcome to UNO';
-        message.style.fontSize= '30px';
+        message.style.fontSize= '35px';
         putMessage.append(message);
     }, 1000);
     setTimeout(()=> {
