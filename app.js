@@ -132,6 +132,7 @@ const moveCards= ()=> {
 //FUNCTION THAT SHOWS CARDS AT BOTTOM AND PUTS THEM IN THE VIEW CARDS DIV
 //call this function everytime you switch whos turn it is 
 const showCards= ()=> {
+    console.log('when is this being called');
     while(viewCard.firstChild){ //will remove (in essense, switch) cards out of viewSpot div
         viewCard.removeChild(viewCard.firstChild);
     }
@@ -310,7 +311,16 @@ const checkCard= ()=> {
     //conditions for if clicked card can be played
     if(event.currentTarget.classList[1]==='black'){ //class of 'black' means its a wild card and if you use a wild card you get to change the color/type at play. You can also play a wild card whenever 
         let wildCard= event.currentTarget;
-        //event.currentTarget.removeEventListener('click', makeAMove); //remove event listener so it cant be clicked on.
+        //conditionals to remove event listers so player cant accidentally click on another card after selecting a wild card 
+        if(whosTurn === 'player1'){
+            for(let i= 0; i< arrayForPlayer1.length; i++){
+                arrayForPlayer1[i].removeEventListener('click', makeAMove);
+            } 
+        } else if(whosTurn=== 'player2'){
+            for(let i= 0; i< arrayForPlayer2.length; i++){
+                arrayForPlayer2[i].removeEventListener('click', makeAMove);
+            }
+        }
         message.innerText= 'Please select the square of the color you would like to switch to.';
         message.style.fontSize= '25px';
         putMessage.append(message);
@@ -340,6 +350,7 @@ const checkCard= ()=> {
                 whosTurn= 'player1';
                 clearMessage();
             }
+            wildCard.style.position= 'absolute'; 
             showCards();
             checkWin();
             playAgain();
@@ -366,7 +377,9 @@ const checkCard= ()=> {
         message.style.fontSize= '25px';
         putMessage.append(message);
     }
-    event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
+    //event.currentTarget.style.position= 'absolute'; //moved into the makeAMove function so that it could be in the != wild card conditional
+
+    
 }
 
 //FUNCTION THAT WILL CLEAR MESSAGE BOARD
@@ -411,7 +424,10 @@ const makeAMove=(event)=> {
         checkWin(); //moved this function call up into the if because on the chance you have a wildCard AND uno, the check win message will clear out the message for user to choose what to change the wild card to
         playAgain();
     } 
-    showCards(); //call showCards function to swap who is allowed to play  
+    if(event.currentTarget.classList[1]!= 'black'){ //this works in hand with the remove event listener for the wild cards, because the showCard function will add the event listeners back on 
+        event.currentTarget.style.position= 'absolute'; //change position style back to absolute so cards in used card spot stack 
+        showCards(); //call showCards function to swap who is allowed to play 
+    }
 }
 
 //FUNCTION THAT CHECKS FOR A WIN, called for every move that is made 

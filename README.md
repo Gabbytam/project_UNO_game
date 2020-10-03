@@ -73,12 +73,15 @@ Personal techniques:
 ### Unsolved Problems
 * The biggest bug that I'm aware of that I couldn't, for the life of me, figure out is _sometimes_ the reshuffle function doesn't work. It always worked the first time, often on the 2nd and 3rd time around but in random cases my drawPile array would grab the top card at some point (could not track where) and then the arrayForAllCards would not be in line with the drawPile array, leading to further mishaps. 
 * Also couldn't figure out how to remove event listeners from the players cards when they choose a wild card and get prompted. Code expects user to click on a color but if they accidentally click on a different card at hand, the whole game gets off track. 
+* If you click the play again button twice on accident it will call playGame function twice and render double of everything 
+* Clicking on rules button twice will create multiple exit buttons 
+    * Added those last minute, hopefully with more time I would be able to fix those bugs 
 * For styling, I got it to look how I want but not sure I did it the best way. I ended up using a lot of divs inside divs to get things to both stack and line up in rows.  
 
 ### Other Notes
 * I apologize for the obscene amount of code... I tried my best to keep it clear and non repatative to the best of my ability.
 * I think perhaps I may have bitten off more than I could chew with this game. The basic steps were pretty straight forward, just using multiple if/else if statements and for loops, but the more I added functions the more I would find little things bugs that required fixing so it was a lot of just fixing small bugs. 
     * It also seemed each time I played the game I would figure something else that wasn't working properly.
-* I thought it was a good idea to use objects/classes but I think I didn't have enough practice with them to use them fully to their advantage 
+* I thought it was a good idea to use objects/classes but I think I didn't have enough practice with them to use them fully to their advantage, looking to learn more.
 * Stretch goals: 
     * I had hopes to work with canvas and be able to code in movement that you can see, like watch a card slide from the deck to a pile. Everything else took me sooooo long that I didn't have time to devote to adding that functionality. (I still hope to learn to do that though).
