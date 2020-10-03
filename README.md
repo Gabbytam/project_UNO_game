@@ -1,4 +1,4 @@
-# project_one
+# UNO Card Game: Project One
 
 ## App Demo:
 https://gabbytam.github.io/project_one/
