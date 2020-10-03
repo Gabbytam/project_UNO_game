@@ -132,7 +132,6 @@ const moveCards= ()=> {
 //FUNCTION THAT SHOWS CARDS AT BOTTOM AND PUTS THEM IN THE VIEW CARDS DIV
 //call this function everytime you switch whos turn it is 
 const showCards= ()=> {
-    console.log('when is this being called');
     while(viewCard.firstChild){ //will remove (in essense, switch) cards out of viewSpot div
         viewCard.removeChild(viewCard.firstChild);
     }
