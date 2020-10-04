@@ -1,7 +1,7 @@
 # UNO Card Game: Project One
 
 ## App Demo:
-https://gabbytam.github.io/project_one/
+ https://gabbytam.github.io/project_UNO_game/
 
 ### Game Concept: 
 I chose to make uno the card game! 

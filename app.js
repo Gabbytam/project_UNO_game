@@ -2,7 +2,7 @@ console.log('(u-no) what it isssss');
 let newDeck; //make this a global variable before setting it to a new instance of a class
 //variables for all the card types and values 
 const cardType= ['red', 'yellow', 'green', 'blue'];
-const cardValue= [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'];
+const cardValue= [0, 1, 2, 3/*, 4, 5, 6, 7, 8, 9, 'skip', 'rvs', '+2'*/];
 const specialCardType= ['Wild Card', 'Wild Card +4'];
 let drawPile;
 let usedCards= [];
